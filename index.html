@@ -83,10 +83,11 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 
 <div id="cfg" hidden>
   <h1>We Are the <b>CHAMPI</b>ons</h1>
-  <p>Connexion à Supabase (une seule fois, gardée sur ce téléphone).</p>
-  <input id="url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocorrect="off">
-  <input id="key" placeholder="Clé publishable (sb_publishable_…) ou anon" autocapitalize="off" autocorrect="off">
-  <button class="btn" id="save">Enregistrer</button>
+  <p>Connexion (une seule fois, tu restes connecté ensuite).</p>
+  <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" autocomplete="username">
+  <input id="pass" type="password" placeholder="Code" autocomplete="current-password">
+  <div id="lmsg" style="color:var(--red);min-height:20px;margin-bottom:8px"></div>
+  <button class="btn" id="login">Se connecter</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -94,16 +95,38 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
-const URL_=store.get('sb_url')||'https://ifittriygtqpgewdwkfo.supabase.co',KEY=store.get('sb_key')||'sb_publishable_l4wgX0eaGvC1ANzzJWAMjw_jl33dMsM';
+const URL_='https://ifittriygtqpgewdwkfo.supabase.co',KEY='sb_publishable_l4wgX0eaGvC1ANzzJWAMjw_jl33dMsM';
 
-/* ---------- Supabase ---------- */
+/* ---------- Supabase + connexion ---------- */
+let sess=null;try{sess=JSON.parse(store.get('sb_sess')||'null')}catch(e){}
+const saveSess=d=>{sess={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};store.set('sb_sess',JSON.stringify(sess))};
+function showLogin(){sess=null;store.del('sb_sess');$('cfg').hidden=false}
+async function auth(body,grant){
+  const r=await fetch(URL_+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok||!d.access_token)throw new Error('refus');
+  saveSess(d);
+}
+async function token(){
+  if(!sess){showLogin();throw new Error('login')}
+  if(sess.expires_at-60<Date.now()/1000){
+    try{await auth({refresh_token:sess.refresh_token},'refresh_token')}catch(e){showLogin();throw new Error('login')}
+  }
+  return sess.access_token;
+}
 async function api(path,opt={}){
-  const r=await fetch(URL_.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,...(KEY.startsWith('eyJ')?{Authorization:'Bearer '+KEY}:{}),'Content-Type':'application/json',...(opt.headers||{})}});
+  const tk=await token();
+  const r=await fetch(URL_+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+tk,'Content-Type':'application/json',...(opt.headers||{})}});
+  if(r.status===401){showLogin();throw new Error('login')}
   if(!r.ok)throw new Error(await r.text());
   return r.status===204?null:r.json().catch(()=>null);
 }
-$('save').onclick=()=>{const u=$('url').value.trim(),k=$('key').value.trim();if(!u||!k)return;store.set('sb_url',u);store.set('sb_key',k);location.reload()};
-if(!URL_||!KEY){$('cfg').hidden=false}
+$('login').onclick=async()=>{
+  $('lmsg').textContent='';
+  try{await auth({email:$('email').value.trim(),password:$('pass').value},'password');$('pass').value='';$('cfg').hidden=true;load()}
+  catch(e){$('lmsg').textContent='Email ou code incorrect.'}
+};
+$('pass').onkeydown=e=>{if(e.key==='Enter')$('login').click()};
 
 /* ---------- Carte & fonds ---------- */
 const map=L.map('map',{zoomControl:false,maxZoom:19}).setView([48.409,2.606],15);
@@ -194,7 +217,7 @@ async function load(){
     }
     plan();refresh();
     if(!fitted&&pts.length){map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[60,60]});fitted=true}
-  }catch(e){$('info').textContent='Erreur de lecture : vérifie la connexion, la clé et la table "points".'}
+  }catch(e){if(e.message==='login')return;$('info').textContent='Erreur de lecture : vérifie la connexion, la clé et la table "points".'}
 }
 window.toggleDone=async id=>{
   const p=pts.find(q=>q.id===id);if(!p)return;
@@ -253,7 +276,7 @@ $('send').onclick=()=>{
   navigator.geolocation.getCurrentPosition(p=>post(p.coords.latitude,p.coords.longitude,p.coords.altitude),()=>{$('msg').textContent='Position refusée ou introuvable.'},{enableHighAccuracy:true,timeout:20000});
 };
 
-if(URL_&&KEY)load();
+if(sess)load();else showLogin();
 </script>
 </body>
 </html>
