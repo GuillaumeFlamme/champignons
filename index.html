@@ -16,8 +16,8 @@ body{font:16px system-ui,-apple-system,sans-serif;background:var(--bg);color:var
 .float{position:absolute;z-index:500;background:var(--card);color:var(--fg);box-shadow:var(--sh)}
 #top{top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;right:70px;border-radius:24px;padding:10px 16px;font-weight:800;font-size:17px}
 #top b{color:var(--acc2)}
-#side{top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;display:flex;flex-direction:column;gap:10px;z-index:500;position:absolute}
-.rb{width:48px;height:48px;border-radius:50%;border:0;background:var(--card);color:var(--fg);box-shadow:var(--sh);font-size:21px}
+#side{top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;display:flex;flex-direction:column;gap:8px;z-index:500;position:absolute}
+.rb{width:46px;height:46px;border-radius:50%;border:0;background:var(--card);color:var(--fg);box-shadow:var(--sh);font-size:21px}
 .rb.on{background:var(--acc2);color:#fff}
 #info{left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 86px);border-radius:18px;padding:12px 16px;font-size:15px}
 #info small{color:var(--mut);display:block;margin-top:2px}
@@ -57,18 +57,26 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 .rad input{width:78px;margin:0;padding:9px}
 .rad span{font-size:14px}
 .rad button{margin:0!important;flex:1}
-#tbl{position:absolute;inset:0;z-index:850;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
-.th{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--mut)}
-.th b{font-size:18px}.th span{flex:1;color:var(--mut);font-size:14px}
-#trows{flex:1;overflow:auto;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 14px)}
-.tr{background:var(--card);border-radius:12px;padding:10px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
-.tr .l{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.tr input,.tr select{margin:0;padding:10px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--fg);font-size:16px}
-.tr select{flex:1;min-width:0}
-.tr label{display:flex;align-items:center;gap:6px;font-size:14px;white-space:nowrap}
+#tbl{position:absolute;left:0;right:0;bottom:0;height:50%;z-index:850;background:var(--card);color:var(--fg);border-radius:20px 20px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.35);display:flex;flex-direction:column}
+.th{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(128,128,128,.4)}
+.th b{font-size:17px}.th span{flex:1;color:var(--mut);font-size:14px}
+#trows{flex:1;overflow:auto;padding:4px 14px calc(env(safe-area-inset-bottom,0px) + 10px)}
+.tr{padding:10px 6px;border-bottom:1px solid rgba(128,128,128,.3)}
+.tr.sel{background:rgba(79,195,247,.16);border-radius:10px}
+.tn small{display:block;color:var(--mut);font-size:13px}
+.ta{display:flex;gap:6px;margin-top:8px}
+.ta .tb{flex:1;padding:9px 4px}
+.fm{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(128,128,128,.5)}
+.fm .l{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.fm input,.fm select{margin:0;padding:10px;border-radius:10px;border:1px solid var(--mut);background:var(--bg);color:var(--fg);font-size:16px;width:100%}
+.fm select{flex:1;min-width:0}
+.fm label{display:flex;align-items:center;gap:6px;font-size:14px;margin-bottom:8px}
+.fm label input{width:auto}
 .tb{padding:10px 12px;border:0;border-radius:10px;font-weight:700;background:var(--acc2);color:#fff;font-size:14px}
 .tb.g{background:transparent;border:1px solid var(--mut);color:var(--fg)}
 .tb.r{background:transparent;border:1px solid var(--red);color:var(--red)}
+.mk.car{background:#111}
+.rb svg{width:24px;height:24px}
 </style>
 </head>
 <body>
@@ -76,6 +84,7 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 <div id="top" class="float">We Are the <b>CHAMPI</b>ons</div>
 <div id="side">
   <button class="rb" id="locate" title="Ma position">◎</button>
+  <button class="rb" id="carBtn" title="Voiture"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button>
   <button class="rb on" id="togRoute" title="Itinéraire">➤</button>
   <button class="rb" id="recalc" title="Recalculer">↻</button>
   <button class="rb sm" id="raz" title="Remettre à zéro">RAZ</button>
@@ -89,6 +98,7 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 <div id="sheet">
   <h2>Signaler un champignon</h2>
   <div class="chips" id="chips"></div>
+  <input id="ttl" placeholder="Titre">
   <input id="note" type="number" inputmode="numeric" min="1" placeholder="Nombre de champi">
   <div class="locrow">
     <button class="chip sel" id="useGps">Ma position</button>
@@ -223,6 +233,8 @@ function drawRoute(){
   const rem=order.map(i=>[+pts[i].lat,+pts[i].lon]);
   const line=(usedMe&&me?[[me.lat,me.lon]]:[]).concat(rem);
   routeLine.setLatLngs(showRoute?line:[]);
+  carLine.setLatLngs(car&&showCar&&me?[[me.lat,me.lon],[car.lat,car.lon]]:[]);
+  $('carBtn').classList.toggle('on',!!car&&showCar);
   if(!pts.length){$('info').innerHTML='Aucun coin pour le moment.';return}
   const done=pts.filter(p=>p.fait).length;
   let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
@@ -233,6 +245,7 @@ function drawRoute(){
   const sp=pts.find(p=>p.id===startId);
   if(sp)h+=`<small>Départ : ${esc(nameOf(sp))} · <a href="#" onclick="setStart(null);return false">revenir à ma position</a></small>`;
   else if(me&&!usedMe)h+='<small>Tu es loin des coins : trajet calculé sans ta position.</small>';
+  if(car&&me)h+=`<small>Voiture : ${fmtD(hv([me.lat,me.lon],[car.lat,car.lon]))} en ligne droite</small>`;
   $('info').innerHTML=h;
 }
 function refresh(){drawPoints();drawRoute()}
@@ -276,7 +289,7 @@ $('chips').onclick=e=>{const s=e.target.dataset.s;if(!s)return;sel=s;[...$('chip
 function clearPending(){pending=null;if(tmp){map.removeLayer(tmp);tmp=null}$('useGps').classList.add('sel');$('usePick').classList.remove('sel');$('loc').textContent='Position : GPS du téléphone'}
 function openSheet(){$('msg').textContent='';$('sheet').classList.add('open')}
 function closeSheet(){$('sheet').classList.remove('open');clearPending()}
-$('fab').onclick=openSheet;
+$('fab').onclick=()=>{closeTbl();openSheet()};
 $('close').onclick=closeSheet;
 $('useGps').onclick=clearPending;
 $('usePick').onclick=()=>{$('sheet').classList.remove('open');picking=true;$('pickbar').hidden=false};
@@ -294,8 +307,8 @@ map.on('click',e=>{
 async function post(lat,lon,alt){
   const nb=parseInt($('note').value,10);
   try{
-    await api('points',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:sel,type:sel,nombre:isNaN(nb)?null:nb,lat,lon,alt,t:new Date().toISOString(),fait:false})});
-    $('note').value='';closeSheet();await load();
+    await api('points',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:($('ttl').value.trim()||sel),type:sel,nombre:isNaN(nb)?null:nb,lat,lon,alt,t:new Date().toISOString(),fait:false})});
+    $('note').value='';$('ttl').value='';closeSheet();await load();
   }catch(e){$('msg').textContent=/column/i.test(e.message)?'Colonne manquante : lance d\'abord le SQL (type, fait, fait_le, nombre).':'Envoi refusé (vérifie la politique RLS de Supabase).'}
 }
 $('send').onclick=()=>{
@@ -326,38 +339,76 @@ $('raz').onclick=async()=>{
   catch(e){toast('Impossible de remettre à zéro.')}
 };
 
-/* ---------- Table ---------- */
+/* ---------- Table (moitié basse) ---------- */
+let editId=null,selId=null,hl=null;
+function focusPoint(p){
+  const z=Math.max(map.getZoom(),17),h=$('tbl').hidden?0:$('tbl').offsetHeight;
+  const c=map.project([p.lat,p.lon],z).add([0,h/2]);
+  map.setView(map.unproject(c,z),z,{animate:false});
+  if(hl)map.removeLayer(hl);
+  hl=L.circleMarker([p.lat,p.lon],{radius:26,color:'#4fc3f7',weight:4,fill:false,interactive:false}).addTo(map);
+  selId=p.id;
+}
+function closeTbl(){$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
 function renderTable(){
   const sc=$('trows').scrollTop;
   $('tcount').textContent=pts.length+' coins';
   const types=[...new Set([...SP,...pts.map(p=>p.type).filter(Boolean)])];
-  $('trows').innerHTML=[...pts].reverse().map(p=>`<div class="tr" data-id="${p.id}">
-    <div class="l"><input class="f-title" style="flex:1;min-width:0" value="${esc(p.title||'')}" placeholder="Nom"></div>
-    <div class="l"><select class="f-type"><option value=""></option>${types.map(t=>`<option${t===p.type?' selected':''}>${esc(t)}</option>`).join('')}</select>
-      <input class="f-nb" type="number" inputmode="numeric" min="0" value="${p.nombre??''}" placeholder="Nb" style="width:76px">
-      <label><input class="f-fait" type="checkbox"${p.fait?' checked':''} style="width:auto"> Fait</label></div>
-    <small style="color:var(--mut)">${(+p.lat).toFixed(5)}, ${(+p.lon).toFixed(5)} · ${esc((p.t||'').slice(0,10))}</small>
-    <div class="l" style="margin:8px 0 0"><button class="tb" data-a="save">Enregistrer</button><button class="tb g" data-a="see">Voir</button><button class="tb r" data-a="del">Supprimer</button></div>
-  </div>`).join('');
+  $('trows').innerHTML=[...pts].reverse().map(p=>{
+    const sub=[p.nombre?p.nombre+' champi':'',p.fait?'fait':'à faire',(p.t||'').slice(0,10).split('-').reverse().join('/')].filter(Boolean).join(' · ');
+    const form=editId===p.id?`<div class="fm">
+      <input class="f-title" placeholder="Titre" value="${esc(p.title||'')}" style="margin-bottom:8px">
+      <div class="l"><select class="f-type"><option value="">Type</option>${types.map(t=>`<option${t===p.type?' selected':''}>${esc(t)}</option>`).join('')}</select>
+        <input class="f-nb" type="number" inputmode="numeric" min="0" value="${p.nombre??''}" placeholder="Nombre" style="width:100px"></div>
+      <label><input class="f-fait" type="checkbox"${p.fait?' checked':''}> Coin fait</label>
+      <div class="l"><button class="tb" data-a="save" style="flex:1">Enregistrer</button><button class="tb g" data-a="cancel" style="flex:1">Annuler</button></div></div>`:'';
+    return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
+      <div class="tn"><b>${esc(nameOf(p))}</b><small>${esc(sub)}</small></div>
+      <div class="ta"><button class="tb g" data-a="edit">Modifier</button><button class="tb g" data-a="see">Voir</button><button class="tb r" data-a="del">Supprimer</button></div>${form}</div>`;
+  }).join('');
   $('trows').scrollTop=sc;
 }
-$('tblBtn').onclick=()=>{renderTable();$('tbl').hidden=false};
-$('tclose').onclick=()=>{$('tbl').hidden=true};
+$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
+$('tclose').onclick=closeTbl;
 $('trows').onclick=async e=>{
   const a=e.target.dataset.a;if(!a)return;
   const row=e.target.closest('.tr'),id=+row.dataset.id,p=pts.find(q=>q.id===id);if(!p)return;
-  if(a==='see'){$('tbl').hidden=true;map.setView([p.lat,p.lon],18);return}
+  if(a==='cancel'){editId=null;renderTable();return}
+  focusPoint(p);
+  if(a==='see'){renderTable();return}
+  if(a==='edit'){editId=(editId===id)?null:id;renderTable();return}
   if(a==='del'){
-    if(!confirm('Supprimer « '+nameOf(p)+' » ?'))return;
-    try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(startId===id)startId=null;await load();renderTable();toast('Supprimé.')}
+    if(!confirm('Supprimer « '+nameOf(p)+' » ?')){renderTable();return}
+    try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(startId===id)startId=null;if(hl){map.removeLayer(hl);hl=null}selId=null;editId=null;await load();renderTable();toast('Supprimé.')}
     catch(err){toast('Suppression impossible.')}
     return;
   }
-  const fait=row.querySelector('.f-fait').checked,nb=parseInt(row.querySelector('.f-nb').value,10);
-  const body={title:row.querySelector('.f-title').value.trim(),type:row.querySelector('.f-type').value||null,nombre:isNaN(nb)?null:nb,fait,fait_le:fait?(p.fait&&p.fait_le?p.fait_le:new Date().toISOString()):null};
-  try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(body)});await load();renderTable();toast('Enregistré.')}
-  catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (nombre).':'Enregistrement impossible.')}
+  if(a==='save'){
+    const fait=row.querySelector('.f-fait').checked,nb=parseInt(row.querySelector('.f-nb').value,10);
+    const body={title:row.querySelector('.f-title').value.trim(),type:row.querySelector('.f-type').value||null,nombre:isNaN(nb)?null:nb,fait,fait_le:fait?(p.fait&&p.fait_le?p.fait_le:new Date().toISOString()):null};
+    try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(body)});editId=null;await load();renderTable();toast('Enregistré.')}
+    catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (nombre).':'Enregistrement impossible.')}
+  }
 };
+
+/* ---------- Voiture (retour en ligne droite) ---------- */
+const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
+let car=null,showCar=true,carMarker=null;
+try{car=JSON.parse(store.get('car')||'null')}catch(e){}
+const carLine=L.polyline([],{color:'#111',weight:4,opacity:.9,dashArray:'8 8',interactive:false}).addTo(map);
+function drawCar(){
+  if(carMarker){map.removeLayer(carMarker);carMarker=null}
+  if(!car)return;
+  carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
+    .bindPopup(()=>'<div class="pop"><b>Voiture</b><button class="o" onclick="placeCar()">Placer ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer</button></div>');
+}
+window.placeCar=()=>{
+  if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
+  car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));showCar=true;map.closePopup();drawCar();drawRoute();toast('Voiture placée ici.');
+};
+window.removeCar=()=>{car=null;store.del('car');map.closePopup();drawCar();drawRoute()};
+$('carBtn').onclick=()=>{if(!car){placeCar();return}showCar=!showCar;drawRoute()};
+drawCar();
 
 if(sess)load();else showLogin();
 </script>
