@@ -70,7 +70,7 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 #col.open .act{opacity:1;transform:none;pointer-events:auto}
 .act span{background:var(--card);color:var(--fg);padding:6px 12px;border-radius:14px;box-shadow:var(--sh);font-weight:700;font-size:14px;white-space:nowrap}
 .act .ic{width:44px;height:44px}
-#locate{position:absolute;z-index:500;left:calc(env(safe-area-inset-left,0px) + 10px);bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
+#locate{color:#e53935;font-size:24px;position:absolute;z-index:500;left:calc(env(safe-area-inset-left,0px) + 10px);bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
 body.picking #col,body.picking #locate{display:none}
 #tt{position:absolute;z-index:500;pointer-events:none;left:calc(env(safe-area-inset-left,0px) + 12px);top:calc(env(safe-area-inset-top,0px) + 10px);font-size:20px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.9);white-space:nowrap}
 #tt b{color:#c98a4b}
@@ -122,7 +122,7 @@ body.drawing #col,body.drawing #locate{display:none}
   <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
   <div class="act"><span>Recalculer</span><button class="ic" id="recalc">↻</button></div>
   <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
-  <div class="act"><span>Exporter en GPX</span><button class="ic sm" id="expBtn">GPX</button></div>
+  <div class="act"><span>Exporter en CSV</span><button class="ic sm" id="expBtn">CSV</button></div>
   <div class="act"><span id="zoneLbl">Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
   <button class="pri" id="plus">＋</button>
   <button class="sig pri" id="fab">🍄 Signaler</button>
@@ -502,28 +502,21 @@ $('zoneBtn').onclick=()=>{if(zone){zone=null;store.del('zone');drawZone();plan()
 $('drc').onclick=endDraw;
 drawZone();
 
-/* ---------- Export GPX (sauvegarde) ---------- */
-const xe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-async function exportGpx(){
-  let rows=pts;
-  try{const r=await api('points?select=*&order=t.asc&limit=5000');if(Array.isArray(r))rows=r.filter(p=>p.lat!=null&&p.lon!=null)}
-  catch(e){if(e.message==='login')return}
-  if(!rows.length){toast('Aucun coin à exporter');return}
-  const iso=v=>{if(!v)return '';const d=new Date(v);return isNaN(d)?'':d.toISOString()};
-  const fr=v=>String(v||'').slice(0,10).split('-').reverse().join('/');
-  const w=rows.map(p=>{
-    const desc=[p.type||'',p.nombre?p.nombre+' champi':'',p.fait?('fait'+(p.fait_le?' le '+fr(p.fait_le):'')):'à faire'].filter(Boolean).join(' · ');
-    return '<wpt lat="'+p.lat+'" lon="'+p.lon+'">'+(p.alt!=null?'<ele>'+p.alt+'</ele>':'')+(iso(p.t)?'<time>'+iso(p.t)+'</time>':'')+'<name>'+xe(nameOf(p))+'</name><desc>'+xe(desc)+'</desc>'+(p.type?'<type>'+xe(p.type)+'</type>':'')+'<extensions><ch:id>'+p.id+'</ch:id><ch:titre>'+xe(p.title)+'</ch:titre><ch:nombre>'+(p.nombre??'')+'</ch:nombre><ch:fait>'+!!p.fait+'</ch:fait><ch:fait_le>'+(p.fait_le||'')+'</ch:fait_le></extensions></wpt>';
-  }).join('\n');
-  const gpx='<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="We Are the CHAMPIons" xmlns="http://www.topografix.com/GPX/1/1" xmlns:ch="http://champignons.local/1">\n<metadata><name>We Are the CHAMPIons</name><time>'+new Date().toISOString()+'</time></metadata>\n'+w+'\n</gpx>\n';
+/* ---------- Export CSV (sauvegarde) ---------- */
+function exportCsv(){
+  if(!pts.length){toast('Aucun coin à exporter');return}
+  const q=v=>{v=v==null?'':String(v);return /[";\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const head=['id','titre','type','nombre','latitude','longitude','altitude','date_signalement','fait','date_fait'];
+  const lines=[head.join(';')].concat(pts.map(p=>[p.id,p.title,p.type,p.nombre,p.lat,p.lon,p.alt,p.t,p.fait?'oui':'non',p.fait_le].map(q).join(';')));
+  const blob=new Blob(['﻿'+lines.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([gpx],{type:'application/gpx+xml'}));
-  a.download='champignons_'+new Date().toISOString().slice(0,10)+'.gpx';
+  a.href=URL.createObjectURL(blob);
+  a.download='champignons_'+new Date().toISOString().slice(0,10)+'.csv';
   document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-  toast('Export GPX : '+rows.length+' coins');
+  setTimeout(()=>URL.revokeObjectURL(a.href),10000);
+  toast('Export CSV : '+pts.length+' coins');
 }
-$('expBtn').onclick=exportGpx;
+$('expBtn').onclick=exportCsv;
 
 if(sess)load();else showLogin();
 </script>
