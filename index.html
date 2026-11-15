@@ -118,10 +118,9 @@ body.drawing #col,body.drawing #locate{display:none}
   <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
   <div class="act"><span>Recalculer</span><button class="ic" id="recalc">↻</button></div>
   <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
-  <div class="act" id="zoneOff" hidden><span>Tous les coins</span><button class="ic sm" id="zoneAll">Tous</button></div>
-  <div class="act"><span>Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
+  <div class="act"><span id="zoneLbl">Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
   <button class="pri" id="plus">＋</button>
-  <button class="sig pri" id="fab"><path fill="🍄 Signaler</button>
+  <button class="sig pri" id="fab"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path fill="#fff" d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></svg>Signaler</button>
 </div>
 <div id="toast" hidden></div>
 <div id="dr" hidden></div>
@@ -200,8 +199,7 @@ $('pass').onkeydown=e=>{if(e.key==='Enter')$('login').click()};
 /* ---------- Carte & fonds ---------- */
 const map=L.map('map',{zoomControl:false,maxZoom:21}).setView([48.409,2.606],15);
 const ign=(layer,fmt)=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=normal&FORMAT=${fmt}&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}`;
-L.tileLayer(ign('ORTHOIMAGERY.ORTHOPHOTOS','image/jpeg'),{maxNativeZoom:18,maxZoom:21,attribution:'© IGN / Géoplateforme'}).addTo(map);
-L.tileLayer(ign('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2','image/png'),{maxNativeZoom:18,maxZoom:21,opacity:.55}).addTo(map);
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{subdomains:'abc',maxNativeZoom:17,maxZoom:21,attribution:'© OpenTopoMap © OpenStreetMap'}).addTo(map);
 
 const ptLayer=L.layerGroup().addTo(map);
 const routeLine=L.polyline([],{color:'#1a73e8',weight:6,opacity:.85}).addTo(map);
@@ -443,8 +441,8 @@ drawCar();
 /* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
 function drawZone(){
   if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
-  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fill:false,interactive:false}).addTo(map);
-  $('zoneOff').hidden=!zone;$('zoneBtn').classList.toggle('on',!!zone);
+  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fillColor:'#ff9800',fillOpacity:.06,interactive:false}).addTo(map);
+  $('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('zoneBtn').classList.toggle('on',!!zone);
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
 function startDraw(){
@@ -473,9 +471,8 @@ dr.addEventListener('pointerup',()=>{
   const todo=inside.filter(p=>!p.fait).length;
   toast(todo+(todo>1?' coins à faire':' coin à faire')+' dans la zone');
 });
-$('zoneBtn').onclick=startDraw;
+$('zoneBtn').onclick=()=>{if(zone){zone=null;store.del('zone');drawZone();plan();refresh();toast('Zone désactivée : tous les coins')}else startDraw()};
 $('drc').onclick=endDraw;
-$('zoneAll').onclick=()=>{zone=null;store.del('zone');drawZone();plan();refresh();toast('Tous les coins')};
 drawZone();
 
 if(sess)load();else showLogin();
