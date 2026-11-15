@@ -443,7 +443,7 @@ drawCar();
 /* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
 function drawZone(){
   if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
-  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fillColor:'#ff9800',fillOpacity:.12,interactive:false}).addTo(map);
+  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fill:false,interactive:false}).addTo(map);
   $('zoneOff').hidden=!zone;$('zoneBtn').classList.toggle('on',!!zone);
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
