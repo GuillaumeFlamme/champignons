@@ -384,9 +384,9 @@ function focusPoint(p){
   hl=L.circleMarker([p.lat,p.lon],{radius:26,color:'#4fc3f7',weight:4,fill:false,interactive:false}).addTo(map);
   selId=p.id;
 }
-function closeTbl(){tq='';tsort=0;updSort();$('tsearch').value='';$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
+function closeTbl(){pinId=null;tq='';tsort=0;updSort();$('tsearch').value='';$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-let tq='',tsort=0;
+let tq='',tsort=0,pinId=null;
 function tableFiltered(){
   const words=norm(tq).split(/\s+/).filter(Boolean);
   const all=[...pts].reverse();
@@ -398,9 +398,10 @@ function tableFiltered(){
   });
 }
 function tableList(){
-  const out=tableFiltered();
-  if(!tsort)return out;
-  return [...out].sort((a,b)=>tsort*nameOf(a).localeCompare(nameOf(b),'fr',{sensitivity:'base',numeric:true}));
+  let out=tableFiltered();
+  if(tsort)out=[...out].sort((a,b)=>tsort*nameOf(a).localeCompare(nameOf(b),'fr',{sensitivity:'base',numeric:true}));
+  if(pinId!=null&&editId===pinId){const i=out.findIndex(p=>p.id===pinId);if(i>0)out=[out[i],...out.slice(0,i),...out.slice(i+1)]}
+  return out;
 }
 function updSort(){$('tsort').textContent=tsort===0?'A↕':tsort===1?'A↑':'A↓'}
 function renderTable(){
@@ -427,11 +428,14 @@ $('tclose').onclick=closeTbl;
 window.editPoint=id=>{
   const p=pts.find(q=>q.id===id);if(!p)return;
   map.closePopup();$('col').classList.remove('open');
-  tq='';$('tsearch').value='';editId=id;
-  $('tbl').hidden=false;
-  renderTable();focusPoint(p);renderTable();
-  const row=$('trows').querySelector('.tr[data-id="'+id+'"]');
-  if(row)row.scrollIntoView({block:'start'});
+  setTimeout(()=>{
+    try{
+      tq='';$('tsearch').value='';editId=id;pinId=id;
+      $('tbl').hidden=false;
+      renderTable();focusPoint(p);renderTable();
+      $('trows').scrollTop=0;
+    }catch(err){toast('Édition impossible : '+err.message)}
+  },0);
 };
 $('tsort').onclick=()=>{tsort=tsort===1?-1:1;updSort();renderTable()};
 $('tsearch').oninput=e=>{tq=e.target.value;renderTable()};
