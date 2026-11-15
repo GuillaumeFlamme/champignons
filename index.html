@@ -105,6 +105,9 @@ body.picking #col,body.picking #locate{display:none}
 #drb button{background:#fff;color:#e65100;border:0;border-radius:10px;padding:8px 12px;font-weight:800}
 body.drawing #col,body.drawing #locate{display:none}
 .mk.out{opacity:.35}
+.ts{padding:8px 14px 0}
+.ts input{margin:0;padding:10px 12px}
+.tempty{padding:18px 6px;color:var(--mut);text-align:center}
 </style>
 </head>
 <body>
@@ -146,6 +149,7 @@ body.drawing #col,body.drawing #locate{display:none}
 
 <div id="tbl" hidden>
   <div class="th"><b>Table des coins</b><span id="tcount"></span><button class="tb g" id="tclose">Fermer</button></div>
+  <div class="ts"><input id="tsearch" type="search" placeholder="Rechercher : type, titre, fait, à faire, date…" autocomplete="off" autocorrect="off" autocapitalize="off"></div>
   <div id="trows"></div>
 </div>
 
@@ -377,12 +381,25 @@ function focusPoint(p){
   hl=L.circleMarker([p.lat,p.lon],{radius:26,color:'#4fc3f7',weight:4,fill:false,interactive:false}).addTo(map);
   selId=p.id;
 }
-function closeTbl(){$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
+function closeTbl(){tq='';$('tsearch').value='';$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
+const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+let tq='';
+function tableList(){
+  const words=norm(tq).split(/\s+/).filter(Boolean);
+  const all=[...pts].reverse();
+  if(!words.length)return all;
+  return all.filter(p=>{
+    if(p.id===editId)return true;
+    const hay=norm([nameOf(p),p.type,p.title,p.nombre?p.nombre+' champi':'',p.fait?'fait':'a faire',(p.t||'').slice(0,10).split('-').reverse().join('/'),p.fait&&p.fait_le?'fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):''].join(' '));
+    return words.every(w=>hay.includes(w));
+  });
+}
 function renderTable(){
   const sc=$('trows').scrollTop;
-  $('tcount').textContent=pts.length+' coins';
+  const list=tableList();
+  $('tcount').textContent=(list.length===pts.length?pts.length:list.length+' / '+pts.length)+' coins';
   const types=[...new Set([...SP,...pts.map(p=>p.type).filter(Boolean)])];
-  $('trows').innerHTML=[...pts].reverse().map(p=>{
+  $('trows').innerHTML=(list.length?'':'<div class="tempty">Aucun résultat</div>')+list.map(p=>{
     const sub=[p.nombre?p.nombre+' champi':'',p.fait?'fait':'à faire',(p.t||'').slice(0,10).split('-').reverse().join('/')].filter(Boolean).join(' · ');
     const form=editId===p.id?`<div class="fm">
       <input class="f-title" placeholder="Titre" value="${esc(p.title||'')}" style="margin-bottom:8px">
@@ -398,6 +415,7 @@ function renderTable(){
 }
 $('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
+$('tsearch').oninput=e=>{tq=e.target.value;renderTable()};
 $('trows').onclick=async e=>{
   const a=e.target.dataset.a;if(!a)return;
   const row=e.target.closest('.tr'),id=+row.dataset.id,p=pts.find(q=>q.id===id);if(!p)return;
