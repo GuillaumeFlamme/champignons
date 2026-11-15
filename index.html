@@ -100,6 +100,11 @@ body.picking #col,body.picking #locate{display:none}
 #pkb button{background:#fff;color:#1a73e8;border:0;border-radius:10px;padding:8px 12px;font-weight:800}
 #pin{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--acc);border:3px solid #fff;box-shadow:0 0 0 2px #000,0 0 0 10px rgba(26,115,232,.35)}
 #pkok{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);transform:translateX(-50%);padding:0 28px;height:56px;border-radius:28px;pointer-events:auto;font-size:18px}
+#dr{position:absolute;inset:0;z-index:750;touch-action:none;cursor:crosshair}
+#drb{position:absolute;z-index:800;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 10px);background:#e65100;color:#fff;border-radius:16px;padding:10px 14px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:var(--sh)}
+#drb button{background:#fff;color:#e65100;border:0;border-radius:10px;padding:8px 12px;font-weight:800}
+body.drawing #col,body.drawing #locate{display:none}
+.mk.out{opacity:.35}
 </style>
 </head>
 <body>
@@ -113,10 +118,14 @@ body.picking #col,body.picking #locate{display:none}
   <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
   <div class="act"><span>Recalculer</span><button class="ic" id="recalc">↻</button></div>
   <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
+  <div class="act" id="zoneOff" hidden><span>Tous les coins</span><button class="ic sm" id="zoneAll">Tous</button></div>
+  <div class="act"><span>Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
   <button class="pri" id="plus">＋</button>
   <button class="sig pri" id="fab"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path fill="#fff" d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></svg>Signaler</button>
 </div>
 <div id="toast" hidden></div>
+<div id="dr" hidden></div>
+<div id="drb" hidden><span>Dessine une zone avec ton doigt</span><button id="drc">Annuler</button></div>
 <div id="pk" hidden><div id="pkb"><span>Déplace la carte sous le point</span><button id="pkc">Annuler</button></div><div id="pin"></div><button class="pri" id="pkok">Placer ici</button></div>
 
 <div id="sheet">
@@ -197,6 +206,10 @@ L.tileLayer(ign('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2','image/png'),{maxNativeZoom:
 const ptLayer=L.layerGroup().addTo(map);
 const routeLine=L.polyline([],{color:'#1a73e8',weight:6,opacity:.85}).addTo(map);
 let pts=[],order=[],usedMe=false,showRoute=true,me=null,meMarker=null,fitted=false,startId=null;
+let zone=null,zonePoly=null,drawing=false,dpts=[],dline=null;
+try{zone=JSON.parse(store.get('zone')||'null')}catch(e){}
+const inPoly=(lat,lon,poly)=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const yi=poly[i][0],xi=poly[i][1],yj=poly[j][0],xj=poly[j][1];if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c}return c};
+const inZone=p=>!zone||inPoly(+p.lat,+p.lon,zone);
 
 let search=null,radius=+store.get('rad')||50;
 const MUSH='<svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path fill="#fff" d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></svg>';
@@ -208,7 +221,7 @@ const nameOf=p=>{const t=p.type||'',n=(p.title&&p.title!==t)?p.title:'';return (
 /* ---------- Trajet le plus court (chemin ouvert, vol d'oiseau) ---------- */
 function plan(){
   usedMe=false;order=[];
-  const act=pts.map((_,i)=>i).filter(i=>!pts[i].fait||pts[i].id===startId);
+  const act=pts.map((_,i)=>i).filter(i=>(inZone(pts[i])||pts[i].id===startId)&&(!pts[i].fait||pts[i].id===startId));
   if(!act.length)return;
   const P=act.map(i=>[+pts[i].lat,+pts[i].lon]);
   const si=act.findIndex(i=>pts[i].id===startId);
@@ -245,7 +258,7 @@ function popHtml(p){
 function drawPoints(){
   ptLayer.clearLayers();
   pts.forEach(p=>{
-    const cls='mk'+(p.fait?' ok':'')+(p.id===startId?' st':'');
+    const cls='mk'+(p.fait?' ok':'')+(p.id===startId?' st':'')+(inZone(p)?'':' out');
     const ic=L.divIcon({className:'',html:`<div class="${cls}">${MUSH}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
     L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).bindPopup(()=>popHtml(p));
   });
@@ -255,11 +268,11 @@ function drawRoute(){
   routeLine.setLatLngs(showRoute?line:[]);
   carLine.setLatLngs(car&&showCar&&me?[[me.lat,me.lon],[car.lat,car.lon]]:[]);
   $('carBtn').classList.toggle('on',!!car&&showCar);
-  const n=pts.length,done=pts.filter(p=>p.fait).length,todo=n-done;
+  const sc=pts.filter(inZone),n=sc.length,done=sc.filter(p=>p.fait).length,todo=n-done;
   $('vfill').style.height=(n?done/n*100:0)+'%';
   if(!n){$('vs').textContent='Aucun coin';return}
   let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
-  $('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}<br>`+(todo?fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':'Tout est fait');
+  $('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}<br>`+(todo?fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':'Tout est fait');
 }
 function refresh(){drawPoints();drawRoute()}
 let toastT=null;
@@ -426,6 +439,44 @@ window.placeCar=()=>{
 window.removeCar=()=>{car=null;store.del('car');map.closePopup();drawCar();drawRoute()};
 $('carBtn').onclick=()=>{if(!car){placeCar();return}showCar=!showCar;drawRoute()};
 drawCar();
+
+/* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
+function drawZone(){
+  if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
+  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fillColor:'#ff9800',fillOpacity:.12,interactive:false}).addTo(map);
+  $('zoneOff').hidden=!zone;$('zoneBtn').classList.toggle('on',!!zone);
+}
+function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
+function startDraw(){
+  closeTbl();map.closePopup();$('col').classList.remove('open');
+  drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
+  map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
+}
+function endDraw(){
+  drawing=false;document.body.classList.remove('drawing');$('dr').hidden=true;$('drb').hidden=true;
+  map.dragging.enable();map.touchZoom.enable();map.doubleClickZoom.enable();resetLine();
+}
+const dr=$('dr');
+const lp=e=>{const r=map.getContainer().getBoundingClientRect();return map.containerPointToLatLng(L.point(e.clientX-r.left,e.clientY-r.top))};
+dr.addEventListener('pointerdown',e=>{e.preventDefault();try{dr.setPointerCapture(e.pointerId)}catch(x){}resetLine();dpts=[lp(e)];dline=L.polyline(dpts,{color:'#ff9800',weight:4,dashArray:'6 6',interactive:false}).addTo(map)});
+dr.addEventListener('pointermove',e=>{if(!dline)return;dpts.push(lp(e));dline.setLatLngs(dpts)});
+dr.addEventListener('pointercancel',resetLine);
+dr.addEventListener('pointerup',()=>{
+  if(!dline)return;
+  if(dpts.length<8){toast('Dessine une zone plus grande');resetLine();return}
+  const poly=dpts.map(l=>[l.lat,l.lng]);
+  const inside=pts.filter(p=>inPoly(+p.lat,+p.lon,poly));
+  if(!inside.length){toast('Aucun coin dans cette zone, réessaie');resetLine();return}
+  zone=poly;store.set('zone',JSON.stringify(zone));
+  endDraw();drawZone();plan();refresh();
+  map.fitBounds(zonePoly.getBounds(),{padding:[60,60]});
+  const todo=inside.filter(p=>!p.fait).length;
+  toast(todo+(todo>1?' coins à faire':' coin à faire')+' dans la zone');
+});
+$('zoneBtn').onclick=startDraw;
+$('drc').onclick=endDraw;
+$('zoneAll').onclick=()=>{zone=null;store.del('zone');drawZone();plan();refresh();toast('Tous les coins')};
+drawZone();
 
 if(sess)load();else showLogin();
 </script>
