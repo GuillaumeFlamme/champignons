@@ -255,6 +255,7 @@ function popHtml(p){
   const has=search&&search.id===p.id;
   return `<div class="pop"><b>${esc(nameOf(p))}</b><br><small>Signalé le ${esc(d)}${esc(fd)}${p.nombre?' · '+p.nombre+' champi':''}</small>
     <button class="${p.fait?'u':''}" onclick="toggleDone(${p.id})">${p.fait?'Annuler « coin fait »':'Coin fait'}</button>
+    <button class="o" onclick="editPoint(${p.id})">Éditer</button>
     <button class="o" onclick="setStart(${p.id})">${p.id===startId?'Retirer le départ':'Partir d\'ici'}</button>
     <div class="rad"><input id="rad" type="number" inputmode="numeric" min="1" value="${radius}"><span>m</span><button class="o" onclick="doSearch(${p.id})">Recherche</button></div>
     ${has?'<button class="u" onclick="clearSearch()">Effacer le rayon</button>':''}</div>`;
@@ -423,6 +424,15 @@ function renderTable(){
 }
 $('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
+window.editPoint=id=>{
+  const p=pts.find(q=>q.id===id);if(!p)return;
+  map.closePopup();$('col').classList.remove('open');
+  tq='';$('tsearch').value='';editId=id;
+  $('tbl').hidden=false;
+  renderTable();focusPoint(p);renderTable();
+  const row=$('trows').querySelector('.tr[data-id="'+id+'"]');
+  if(row)row.scrollIntoView({block:'start'});
+};
 $('tsort').onclick=()=>{tsort=tsort===1?-1:1;updSort();renderTable()};
 $('tsearch').oninput=e=>{tq=e.target.value;renderTable()};
 $('trows').onclick=async e=>{
