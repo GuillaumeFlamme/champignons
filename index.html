@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Champiniouf</title>
+<title>We Are the CHAMPIons</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
@@ -23,12 +23,9 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 .mk{width:34px;height:34px;border-radius:50%;background:#1a73e8;border:3px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.45)}
 .mk svg{width:20px;height:20px}
 .mk.ok{background:#2e9d4f}
+.mk.st{box-shadow:0 0 0 4px var(--acc),0 2px 6px rgba(0,0,0,.45)}
 .mk.new{background:var(--acc)}
-.me{position:relative;width:40px;height:40px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))}
-.me svg{width:40px;height:40px;display:block}
-.me .dot{display:none;position:absolute;left:11px;top:11px;width:18px;height:18px;border-radius:50%;background:#e53935;border:3px solid #fff;box-shadow:0 0 0 6px rgba(229,57,53,.3)}
-.me.nh .dot{display:block}
-.me.nh svg{display:none}
+.me{width:18px;height:18px;border-radius:50%;background:#e53935;border:3px solid #fff;box-shadow:0 0 0 6px rgba(229,57,53,.3)}
 .pop{min-width:170px}
 .pop button{display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:0;background:#2e9d4f;color:#fff;font-weight:800;font-size:15px}
 .pop button.o{background:#e3f0ff;color:#0d47a1;font-weight:700}
@@ -111,43 +108,33 @@ body.drawing #col,body.drawing #locate{display:none}
 .ts input{margin:0;padding:10px 12px;flex:1;min-width:0}
 #tsort{flex:none;font-size:16px;padding:10px 14px}
 .tempty{padding:18px 6px;color:var(--mut);text-align:center}
-#radar{position:absolute;z-index:850;left:calc(env(safe-area-inset-left,0px) + 36px);bottom:calc(env(safe-area-inset-bottom,0px) + 68px);width:min(34vw,180px);height:min(34vw,180px);color:#d7ffe0;display:flex;flex-direction:column}
-#radar.big{left:0;right:0;top:0;bottom:auto;width:auto;height:50%;background:#04140a;box-shadow:0 6px 24px rgba(0,0,0,.35)}
-.rh{display:none;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 4px}
-#radar.big .rh{display:flex}
-body.drawing #radar,body.picking #radar{display:none}
-.rh b{font-size:17px}.rh span{flex:1;color:#7fbf90;font-size:13px}
-#radar .tb.g{color:#d7ffe0;border-color:#4a8a5c}
-#rwrap{flex:1;min-height:0;position:relative}
-#rcv{position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation}
-body.radar #map{top:50%}
-body.radar #tt{display:none}
-body.radar #v,body.radar #vs{top:calc(50% + 10px)}
-#spin{position:absolute;inset:0;z-index:950;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:16px}
-#spbox{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff;text-align:center;width:100%}
-#sptitle{font-size:20px;font-weight:800}
-#spsub{font-size:14px;color:#cfe8ff;min-height:18px}
-#spsvg{width:min(80vw,340px,50vh);height:auto;touch-action:none;cursor:grab;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5))}
-#spsvg.pop{animation:sppop .5s ease-out}
-@keyframes sppop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
-#sphint{font-size:16px;font-weight:700;min-height:22px}
-.sprow{display:flex;gap:10px;margin-top:6px}
-#spin .tb.g{color:#fff;border-color:rgba(255,255,255,.5)}
+/* ---- RA : caméra + radar ---- */
+#ra{position:absolute;inset:0;z-index:950;background:#000;overflow:hidden}
+#rav{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#rao{position:absolute;inset:0;pointer-events:none}
+#rah{position:absolute;z-index:3;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;gap:8px;align-items:center}
+#rainfo{flex:1;color:#fff;font-weight:700;font-size:13px;text-shadow:0 1px 4px #000,0 0 2px #000}
+.rab{background:rgba(0,0,0,.55);color:#fff;border:1px solid #fff;border-radius:12px;padding:9px 12px;font-weight:700;font-size:14px}
+#rar{position:absolute;z-index:3;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.45)}
+.rat{position:absolute;transform:translate(-50%,-50%);background:rgba(0,0,0,.6);color:#fff;border:2px solid #ffb74d;border-radius:14px;padding:4px 8px;font-size:13px;font-weight:700;white-space:nowrap;text-align:center}
+.rat.ok{border-color:#2e9d4f}
+.rae{position:absolute;top:45%;background:rgba(0,0,0,.6);color:#fff;border-radius:12px;padding:6px 10px;font-size:13px;font-weight:700;text-align:center}
 </style>
 </head>
 <body>
 <div id="map"></div>
-<div id="tt"><b>Champi</b>niouf</div>
+<div id="tt">We Are the <b>CHAMPI</b>ons</div>
 <div id="v"><i id="vfill"></i></div>
 <div id="vs">Chargement…</div>
 <button class="ic" id="locate" title="Ma position">◎</button>
 <div id="col">
 <div class="act"><span>Table</span><button class="ic" id="tblBtn">≡</button></div>
-<div class="act"><span>Radar à champi</span><button class="ic" id="radarBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 12L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
+<div class="act"><span>Recalculer</span><button class="ic" id="recalc">↻</button></div>
 <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
 <div class="act"><span>Exporter en CSV</span><button class="ic sm" id="expBtn">CSV</button></div>
 <div class="act"><span id="zoneLbl">Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
+<div class="act"><span>Réalité augmentée</span><button class="ic sm" id="raBtn">RA</button></div>
 <button class="pri" id="plus">＋</button>
 <button class="sig pri" id="fab">🍄 Signaler</button>
 </div>
@@ -171,35 +158,19 @@ body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 </div>
 </div>
 </div>
-<div id="spin" hidden>
-<div id="spbox">
-<div id="sptitle"></div>
-<div id="spsub"></div>
-<svg id="spsvg" viewBox="0 0 220 220">
-<circle cx="110" cy="110" r="104" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="8"/>
-<circle id="spprog" cx="110" cy="110" r="104" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-dasharray="653.45" stroke-dashoffset="653.45" transform="rotate(-90 110 110)"/>
-<g id="sprot">
-<circle id="spfill" cx="110" cy="110" r="88" fill="#1a73e8"/>
-<circle cx="110" cy="110" r="88" fill="none" stroke="#fff" stroke-width="4"/>
-<g fill="#fff" opacity=".85"><circle cx="110" cy="40" r="8"/><circle cx="159.5" cy="60.5" r="4"/><circle cx="180" cy="110" r="4"/><circle cx="159.5" cy="159.5" r="4"/><circle cx="110" cy="180" r="4"/><circle cx="60.5" cy="159.5" r="4"/><circle cx="40" cy="110" r="4"/><circle cx="60.5" cy="60.5" r="4"/></g>
-<g transform="translate(70 70) scale(3.3333)" fill="#fff"><path d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></g>
-</g>
-</svg>
-<div id="sphint"></div>
-<div class="sprow"><button class="tb g" id="spopt">Options</button><button class="tb g" id="spclose">Fermer</button></div>
-</div>
-</div>
-<div id="radar" hidden>
-<div class="rh"><b>Radar à champi</b><span id="rsrc"></span><button class="tb g" id="rclose">Réduire</button></div>
-<div id="rwrap"><canvas id="rcv"></canvas></div>
-</div>
 <div id="tbl" hidden>
 <div class="th"><b>Table des coins</b><span id="tcount"></span><button class="tb g" id="tclose">Fermer</button></div>
 <div class="ts"><input id="tsearch" type="search" placeholder="Rechercher : type, titre, fait, à faire, date…" autocomplete="off" autocorrect="off" autocapitalize="off"><button class="tb g" id="tsort" title="Trier par titre">A↕</button></div>
 <div id="trows"></div>
 </div>
+<div id="ra" hidden>
+<video id="rav" autoplay playsinline muted></video>
+<div id="rao"></div>
+<div id="rah"><span id="rainfo"></span><button class="rab" id="raflt">À faire</button><button class="rab" id="rax">Fermer</button></div>
+<canvas id="rar" width="120" height="120"></canvas>
+</div>
 <div id="cfg" hidden>
-<h1><b>Champi</b>niouf</h1>
+<h1>We Are the <b>CHAMPI</b>ons</h1>
 <p>Connexion (une seule fois, tu restes connecté ensuite).</p>
 <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" autocomplete="username">
 <input id="pass" type="password" placeholder="Code" autocomplete="current-password">
@@ -212,7 +183,6 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
 const URL_='https://ifittriygtqpgewdwkfo.supabase.co',KEY='sb_publishable_l4wgX0eaGvC1ANzzJWAMjw_jl33dMsM';
-
 /* ---------- Supabase + connexion ---------- */
 let sess=null;try{sess=JSON.parse(store.get('sb_sess')||'null')}catch(e){}
 const saveSess=d=>{sess={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};store.set('sb_sess',JSON.stringify(sess))};
@@ -243,18 +213,13 @@ try{await auth({email:$('email').value.trim(),password:$('pass').value},'passwor
 catch(e){$('lmsg').textContent='Email ou code incorrect.'}
 };
 $('pass').onkeydown=e=>{if(e.key==='Enter')$('login').click()};
-
 /* ---------- Carte & fonds ---------- */
 const map=L.map('map',{zoomControl:false,maxZoom:21}).setView([48.409,2.606],15);
+const ign=(layer,fmt)=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=normal&FORMAT=${fmt}&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}`;
 L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{subdomains:'abc',maxNativeZoom:17,maxZoom:21,attribution:'© OpenTopoMap © OpenStreetMap'}).addTo(map);
 const ptLayer=L.layerGroup().addTo(map);
 const routeLine=L.polyline([],{color:'#1a73e8',weight:6,opacity:.85}).addTo(map);
-let pts=[],order=[],routeOn=false,me=null,meMarker=null,fitted=false;
-let car=null,carMarker=null,walk=null;
-try{walk=JSON.parse(store.get('walk')||'null')}catch(e){}
-if(walk&&walk.car&&Array.isArray(walk.track)&&walk.track.length){car=walk.car;routeOn=true}else walk=null;
-store.del('car');
-const wLine=L.polyline(walk?walk.track.map(t=>[t[0],t[1]]):[],{color:'#2e9d4f',weight:3,opacity:.95,interactive:false}).addTo(map);
+let pts=[],order=[],usedMe=false,showRoute=true,me=null,meMarker=null,fitted=false,startId=null;
 let zone=null,zonePoly=null,drawing=false,dpts=[],dline=null;
 try{zone=JSON.parse(store.get('zone')||'null')}catch(e){}
 const inPoly=(lat,lon,poly)=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const yi=poly[i][0],xi=poly[i][1],yj=poly[j][0],xj=poly[j][1];if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c}return c};
@@ -265,66 +230,63 @@ const hv=(a,b)=>{const R=6371000,r=Math.PI/180,dp=(b[0]-a[0])*r,dl=(b[1]-a[1])*r
 const h=Math.sin(dp/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
 const fmtD=m=>m<1000?Math.round(m)+' m':(m/1000).toFixed(1).replace('.',',')+' km';
 const nameOf=p=>{const t=p.type||'',n=(p.title&&p.title!==t)?p.title:'';return (t&&n)?t+' – '+n:(t||n||'Coin')};
-
-/* ---------- Parcours : départ voiture, plus court chemin (vol d'oiseau), retour voiture ---------- */
+/* ---------- Trajet le plus court (chemin ouvert, vol d'oiseau) ---------- */
 function plan(){
-order=[];
-if(!routeOn||!car)return;
-const act=pts.map((_,i)=>i).filter(i=>inZone(pts[i])&&!pts[i].fait);
+usedMe=false;order=[];
+const act=pts.map((_,i)=>i).filter(i=>(inZone(pts[i])||pts[i].id===startId)&&(!pts[i].fait||pts[i].id===startId));
 if(!act.length)return;
-const P=[[car.lat,car.lon],...act.map(i=>[+pts[i].lat,+pts[i].lon])];
-const N=P.length,D=P.map(a=>P.map(b=>hv(a,b)));
-/* plus proche voisin depuis la voiture (index 0) */
-const t=[0],left=new Set();
-for(let k=1;k<N;k++)left.add(k);
-while(left.size){const c=t[t.length-1];let b=-1,bd=1e18;for(const k of left)if(D[c][k]<bd){bd=D[c][k];b=k}t.push(b);left.delete(b)}
-/* amélioration 2-opt, la voiture reste en premier */
-let imp=true;
+const P=act.map(i=>[+pts[i].lat,+pts[i].lon]);
+const si=act.findIndex(i=>pts[i].id===startId);
+let nodes=P,off=0,fixed=-1;
+if(si>=0)fixed=si;
+const N=nodes.length,D=nodes.map(a=>nodes.map(b=>hv(a,b)));
+const len=t=>{let s=0;for(let i=0;i<t.length-1;i++)s+=D[t[i]][t[i+1]];return s};
+const opt=(t,f)=>{let imp=true;
 while(imp){imp=false;
-for(let i=1;i<N-1;i++)for(let j=i+1;j<N;j++){
-const a=D[t[i-1]][t[i]],b=j<N-1?D[t[j]][t[j+1]]:0;
-const a2=D[t[i-1]][t[j]],b2=j<N-1?D[t[i]][t[j+1]]:0;
+for(let i=f?1:0;i<N-1;i++)for(let j=i+1;j<N;j++){
+const a=i>0?D[t[i-1]][t[i]]:0,b=j<N-1?D[t[j]][t[j+1]]:0;
+const a2=i>0?D[t[i-1]][t[j]]:0,b2=j<N-1?D[t[i]][t[j+1]]:0;
 if(a2+b2<a+b-1e-9){const seg=t.slice(i,j+1).reverse();t.splice(i,j-i+1,...seg);imp=true}
 }}
-order=t.slice(1).map(k=>act[k-1]);
+return t};
+const nn=s=>{const t=[s],left=new Set([...Array(N).keys()]);left.delete(s);
+while(left.size){const c=t[t.length-1];let b=-1,bd=1e18;for(const k of left)if(D[c][k]<bd){bd=D[c][k];b=k}t.push(b);left.delete(b)}return t};
+let best=null;
+for(const s of (fixed>=0?[fixed]:[...Array(N).keys()])){const t=opt(nn(s),fixed>=0),l=len(t);if(!best||l<best[0])best=[l,t]}
+order=best[1].filter(k=>!(off&&k===0)).map(k=>act[k-off]);
 }
-
 /* ---------- Affichage ---------- */
 function popHtml(p){
 const d=(p.t||'').slice(0,10).split('-').reverse().join('/');
 const fd=p.fait&&p.fait_le?' · fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):'';
 const has=search&&search.id===p.id;
 return `<div class="pop"><b>${esc(nameOf(p))}</b><br><small>Signalé le ${esc(d)}${esc(fd)}${p.nombre?' · '+p.nombre+' champi':''}</small>
-${p.fait?`<button class="u" onclick="toggleDone(${p.id})">Annuler « coin fait »</button>`:''}
+<button class="${p.fait?'u':''}" onclick="toggleDone(${p.id})">${p.fait?'Annuler « coin fait »':'Coin fait'}</button>
 <button class="o" onclick="editPoint(${p.id})">Éditer</button>
+<button class="o" onclick="setStart(${p.id})">${p.id===startId?'Retirer le départ':'Partir d\'ici'}</button>
 <div class="rad"><input id="rad" type="number" inputmode="numeric" min="1" value="${radius}"><span>m</span><button class="o" onclick="doSearch(${p.id})">Recherche</button></div>
 ${has?'<button class="u" onclick="clearSearch()">Effacer le rayon</button>':''}</div>`;
 }
 function drawPoints(){
 ptLayer.clearLayers();
 pts.forEach(p=>{
-const cls='mk'+(p.fait?' ok':'')+(inZone(p)?'':' out');
+const cls='mk'+(p.fait?' ok':'')+(p.id===startId?' st':'')+(inZone(p)?'':' out');
 const ic=L.divIcon({className:'',html:`<div class="${cls}">${MUSH}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
-L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).on('click',()=>pointTap(p.id));
+L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).bindPopup(()=>popHtml(p));
 });
 }
-function drawCar(){
-if(carMarker){map.removeLayer(carMarker);carMarker=null}
-if(!routeOn||!car)return;
-carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
-.bindPopup(()=>{const s=walkStats();return '<div class="pop"><b>Ma balade</b>'+(s?'<br>Temps : '+fmtT(s.t)+'<br>Distance : '+fmtD(s.d):'')+'<button class="o" onclick="placeCar()">Placer la voiture ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer le point voiture</button></div>'});
-}
 function drawRoute(){
-const line=(routeOn&&car&&order.length)?[[car.lat,car.lon],...order.map(i=>[+pts[i].lat,+pts[i].lon]),[car.lat,car.lon]]:[];
-routeLine.setLatLngs(line);
-$('carBtn').classList.toggle('on',routeOn);
+const line=order.map(i=>[+pts[i].lat,+pts[i].lon]);
+routeLine.setLatLngs(showRoute?line:[]);
+carLine.setLatLngs(car&&showCar&&me?[[me.lat,me.lon],[car.lat,car.lon]]:[]);
+$('carBtn').classList.toggle('on',!!car&&showCar);
 const sc=pts.filter(inZone),n=sc.length,done=sc.filter(p=>p.fait).length,todo=n-done;
 $('vfill').style.height=(n?done/n*100:0)+'%';
 if(!n){$('vs').textContent='Aucun coin';return}
 let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
-$('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}`+(todo?(line.length?'<br>'+fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':''):'<br>Tout est fait')+(walk?'<br>Balade : '+fmtT(Date.now()-walk.start)+' · '+fmtD(walk.dist):'');
+$('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}<br>`+(todo?fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':'Tout est fait');
 }
-function refresh(){radarDirty=true;drawPoints();drawRoute();drawCar()}
+function refresh(){drawPoints();drawRoute()}
 let toastT=null;
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,5000)}
 async function load(){
@@ -343,20 +305,18 @@ const p=pts.find(q=>q.id===id);if(!p)return;
 try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:!p.fait,fait_le:p.fait?null:new Date().toISOString()})});map.closePopup();load()}
 catch(e){alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colonnes « fait » et « fait_le » ?')}
 };
-
+window.setStart=id=>{startId=(id===startId)?null:id;map.closePopup();plan();refresh()};
 /* ---------- GPS ---------- */
 function onPos(pos){
+const first=!me;
 me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt:pos.coords.altitude};
-radarDirty=true;
-if(pos.coords.heading!=null&&!isNaN(pos.coords.heading)&&(pos.coords.speed||0)>0.7){gpsH=pos.coords.heading;gpsHT=Date.now()}
-trackPos(pos);
-if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me nh"><div class="dot"></div><svg viewBox="0 0 40 40"><path d="M20 3L33 35L20 28L7 35Z" fill="#e53935" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div>',iconSize:[40,40],iconAnchor:[20,20]}),interactive:false,zIndexOffset:1000}).addTo(map);
+if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
 else meMarker.setLatLng([me.lat,me.lon]);
-queueArrow();
+drawRoute();
 }
 if(navigator.geolocation)navigator.geolocation.watchPosition(onPos,()=>{},{enableHighAccuracy:true,maximumAge:5000});
 $('locate').onclick=()=>{if(me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17));else alert('Position GPS pas encore trouvée (autorise la localisation).')};
-
+$('recalc').onclick=()=>{plan();refresh()};
 /* ---------- Signalement ---------- */
 const SP=['Bolet','Cèpe','Girolle','Morille','Trompette','Pied de mouton','Autre'];let sel=null,pending=null,tmp=null,nb=1;
 $('chips').innerHTML=SP.map(s=>`<button class="chip" data-s="${s}">${s}</button>`).join('');
@@ -369,7 +329,7 @@ function closeSheet(){$('sheet').classList.remove('open');clearPending()}
 $('fab').onclick=()=>{closeTbl();openSheet()};
 $('close').onclick=closeSheet;
 $('useGps').onclick=clearPending;
-$('usePick').onclick=()=>{shrinkRadar();$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
+$('usePick').onclick=()=>{$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
 function endPick(){document.body.classList.remove('picking');$('pk').hidden=true}
 $('pkc').onclick=()=>{endPick();clearPending();openSheet()};
 $('pkok').onclick=()=>{
@@ -393,12 +353,10 @@ if(!navigator.geolocation){$('msg').textContent='GPS indisponible.';return}
 $('msg').textContent='Recherche de ta position…';
 navigator.geolocation.getCurrentPosition(p=>post(p.coords.latitude,p.coords.longitude,p.coords.altitude),()=>{$('msg').textContent='Position refusée ou introuvable.'},{enableHighAccuracy:true,timeout:20000});
 };
-
 /* ---------- Bouton + (actions) ---------- */
 $('plus').onclick=()=>$('col').classList.toggle('open');
 document.querySelectorAll('.act .ic').forEach(b=>b.addEventListener('click',()=>$('col').classList.remove('open')));
 map.on('click',()=>$('col').classList.remove('open'));
-
 /* ---------- Recherche (rayon) ---------- */
 window.doSearch=id=>{
 const p=pts.find(q=>q.id===id);if(!p)return;
@@ -410,7 +368,6 @@ const c=L.circle([p.lat,p.lon],{radius:r,color:'#1a73e8',weight:2,dashArray:'6 6
 search={id,circle:c};map.closePopup();map.fitBounds(c.getBounds(),{padding:[40,40]});
 };
 window.clearSearch=()=>{if(search){map.removeLayer(search.circle);search=null}map.closePopup()};
-
 /* ---------- Remise à zéro ---------- */
 $('raz').onclick=async()=>{
 if(!pts.some(p=>p.fait)){toast('Aucun coin fait à remettre à zéro.');return}
@@ -418,7 +375,6 @@ if(!confirm('Remettre tous les coins à zéro ?'))return;
 try{await api('points?fait=eq.true',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:false,fait_le:null})});await load();toast('Coins remis à zéro.')}
 catch(e){toast('Impossible de remettre à zéro.')}
 };
-
 /* ---------- Table (moitié basse) ---------- */
 let editId=null,selId=null,hl=null;
 function focusPoint(p){
@@ -468,14 +424,14 @@ return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
 }).join('');
 $('trows').scrollTop=sc;
 }
-$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}shrinkRadar();map.closePopup();renderTable();$('tbl').hidden=false};
+$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
 window.editPoint=id=>{
 const p=pts.find(q=>q.id===id);if(!p)return;
 map.closePopup();$('col').classList.remove('open');
 setTimeout(()=>{
 try{
-shrinkRadar();tq='';$('tsearch').value='';editId=id;pinId=id;
+tq='';$('tsearch').value='';editId=id;pinId=id;
 $('tbl').hidden=false;
 renderTable();focusPoint(p);renderTable();
 $('trows').scrollTop=0;
@@ -493,7 +449,7 @@ if(a==='see'){renderTable();return}
 if(a==='edit'){editId=(editId===id)?null:id;renderTable();return}
 if(a==='del'){
 if(!confirm('Supprimer « '+nameOf(p)+' » ?')){renderTable();return}
-try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(hl){map.removeLayer(hl);hl=null}selId=null;editId=null;await load();renderTable();toast('Supprimé.')}
+try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(startId===id)startId=null;if(hl){map.removeLayer(hl);hl=null}selId=null;editId=null;await load();renderTable();toast('Supprimé.')}
 catch(err){toast('Suppression impossible.')}
 return;
 }
@@ -504,295 +460,24 @@ try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal
 catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (nombre).':'Enregistrement impossible.')}
 }
 };
-
-/* ---------- Cap (boussole) : flèche de position + radar à champi ---------- */
-const radarEl=$('radar'),cv=$('rcv'),g=cv.getContext('2d');
-let radarOn=false,radarBig=false,rafId=null,near=[],radarDirty=true,hCur=null,hRaw=null,hRawT=0,gpsH=null,gpsHT=0,blips=[],lastSrc='',oriOn=false,oriBusy=false,arrowQ=false;
-const RAD=Math.PI/180,RMAX=200;
-const bearing=(a,b)=>{const f1=a[0]*RAD,f2=b[0]*RAD,dl=(b[1]-a[1])*RAD;return (Math.atan2(Math.sin(dl)*Math.cos(f2),Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl))/RAD+360)%360};
-const shortN=s=>s.length>16?s.slice(0,15)+'…':s;
-/* cap lissé : boussole du téléphone, sinon cap GPS (en marchant), sinon nord en haut */
-function headingNow(){
-const now=Date.now();let tgt=null,src='Nord en haut';
-if(hRaw!=null&&now-hRawT<3000){tgt=hRaw;src='Boussole'}
-else if(gpsH!=null&&now-gpsHT<10000){tgt=gpsH;src='Cap GPS'}
-if(tgt!=null)hCur=hCur==null?tgt:(hCur+(((tgt-hCur+540)%360)-180)*.3+360)%360;
-return{h:tgt!=null?hCur:null,src};
-}
-/* flèche rouge de ma position */
-function updateArrow(){
-if(!meMarker)return;
-const el=meMarker.getElement(),m=el&&el.firstChild;
-if(!m)return;
-const h=headingNow().h;
-m.classList.toggle('nh',h==null);
-m.style.transform=h==null?'':'rotate('+h+'deg)';
-}
-function queueArrow(){if(arrowQ)return;arrowQ=true;requestAnimationFrame(()=>{arrowQ=false;updateArrow()})}
-function computeNear(){
-radarDirty=false;
-if(!me){near=[];return}
-const a=[me.lat,me.lon];
-near=pts.filter(p=>!p.fait).map(p=>{const b=[+p.lat,+p.lon];return{p,d:hv(a,b),b:bearing(a,b)}}).filter(n=>n.d<=RMAX).sort((x,y)=>x.d-y.d);
-}
-/* boussole : iOS (webkitCompassHeading) ou Android (orientation absolue) */
-function onOri(e){
-let h=null;
-if(typeof e.webkitCompassHeading==='number'&&!isNaN(e.webkitCompassHeading))h=e.webkitCompassHeading;
-else if(e.alpha!=null&&(e.absolute||e.type==='deviceorientationabsolute')){
-if(e.beta!=null&&e.gamma!=null&&Math.abs(e.beta)>=40){
-const a=e.alpha*RAD,b=e.beta*RAD,c=e.gamma*RAD;
-const rA=-Math.cos(a)*Math.sin(c)-Math.sin(a)*Math.sin(b)*Math.cos(c);
-const rB=-Math.sin(a)*Math.sin(c)+Math.cos(a)*Math.sin(b)*Math.cos(c);
-h=(Math.atan2(rA,rB)/RAD+360)%360;
-}else h=(360-e.alpha)%360;
-}
-if(h!=null){hRaw=h;hRawT=Date.now();queueArrow()}
-}
-const oriEv='ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation';
-const needGesture=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
-async function startOri(){
-if(oriOn||oriBusy)return;
-oriBusy=true;
-try{
-if(needGesture&&(await DeviceOrientationEvent.requestPermission())!=='granted'){
-toast('Boussole refusée : la flèche et le radar utiliseront ton cap GPS quand tu marches.');
-oriBusy=false;return;
-}
-window.addEventListener(oriEv,onOri,true);oriOn=true;
-}catch(e){}
-oriBusy=false;
-}
-if(!needGesture)startOri();
-else document.addEventListener('click',()=>startOri(),{once:true});
-
-/* ---------- Radar : petit sur la carte (coin gauche), agrandi en demi-page au clic ---------- */
-function drawRadar(){
-const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
-if(!w||!h)return;
-if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
-g.setTransform(dpr,0,0,dpr,0,0);
-g.clearRect(0,0,w,h);
-const big=radarBig,now=Date.now();
-const hs=headingNow(),hd=hs.h==null?0:hs.h;
-if(radarDirty)computeNear();
-const lbl=(me?hs.src+' · '+near.length+(near.length>1?' coins':' coin'):hs.src)+' · '+RMAX+' m';
-if(lbl!==lastSrc){lastSrc=lbl;$('rsrc').textContent=lbl}
-const mx=w/2,my=h/2,R=Math.max(30,Math.min(w,h)/2-(big?14:4));
-const txt=(s,x,y)=>{g.lineWidth=3;g.lineJoin='round';g.strokeStyle='rgba(0,0,0,.65)';g.strokeText(s,x,y);g.fillText(s,x,y)};
-/* fond, anneaux, axes */
-g.fillStyle=big?'rgba(8,60,25,.55)':'rgba(0,28,10,.38)';
-g.beginPath();g.arc(mx,my,R,0,7);g.fill();
-for(const k of [.25,.5,.75,1]){g.strokeStyle=k===1?'rgba(110,255,145,.9)':'rgba(110,255,145,.45)';g.lineWidth=k===1?2:1;g.beginPath();g.arc(mx,my,R*k,0,7);g.stroke()}
-g.strokeStyle='rgba(110,255,145,.35)';g.lineWidth=1;
-g.beginPath();g.moveTo(mx-R,my);g.lineTo(mx+R,my);g.moveTo(mx,my-R);g.lineTo(mx,my+R);g.stroke();
-/* points cardinaux (tournent avec ton cap) */
-g.font='bold '+(big?14:11)+'px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';
-const cr=R-(big?11:8);
-[['N',0,'#ff5252'],['E',90,'#d7ffe0'],['S',180,'#d7ffe0'],['O',270,'#d7ffe0']].forEach(([t,b,c])=>{const a=(b-hd)*RAD;g.fillStyle=c;txt(t,mx+cr*Math.sin(a),my-cr*Math.cos(a))});
-/* échelle (grand format) */
-if(big){
-g.font='11px system-ui,sans-serif';g.fillStyle='rgba(200,255,215,.95)';g.textAlign='left';g.textBaseline='alphabetic';
-txt(fmtD(RMAX/2),mx+16,my-R/2-3);
-txt(fmtD(RMAX),mx+16,my-R+14);
-}
-/* coins à faire dans 200 m */
-blips=[];
-g.textAlign='center';g.textBaseline='middle';g.font=(big?13:11)+'px system-ui,sans-serif';g.fillStyle='#d7ffe0';
-if(!me)txt(big?'Recherche de ta position GPS…':'GPS…',mx,my+R*.45);
-else if(!near.length)txt(big?'Aucun coin à faire dans 200 m':'Aucun coin',mx,my+R*.45);
-for(let i=near.length-1;i>=0;i--){
-const n=near[i],a=(n.b-hd)*RAD,r=Math.min(n.d/RMAX,1)*R,x=mx+r*Math.sin(a),y=my-r*Math.cos(a);
-blips.push({x,y,n});
-const col=i===0?'#ffd54f':'#7CFF9B';
-g.fillStyle=col;g.beginPath();g.arc(x,y,big?(i===0?9:7):(i===0?6:4.5),0,7);g.fill();
-g.strokeStyle='rgba(0,0,0,.6)';g.lineWidth=1.5;g.stroke();
-if(big||i===0){
-const right=x<w-(big?80:55),off=big?13:9;
-g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
-const lx=x+(right?off:-off);
-g.font='bold '+(big?13:11)+'px system-ui,sans-serif';g.fillStyle=col;txt(fmtD(n.d),lx,y+4);
-if(big&&i===0){g.font='11px system-ui,sans-serif';g.fillStyle='rgba(215,255,224,.95)';txt(shortN(nameOf(n.p)),lx,y+17)}
-}
-}
-/* toi, au centre (toujours vers le haut) */
-const s=big?1:.75;
-g.fillStyle='#fff';g.beginPath();g.moveTo(mx,my-9*s);g.lineTo(mx+7*s,my+8*s);g.lineTo(mx,my+4*s);g.lineTo(mx-7*s,my+8*s);g.closePath();g.fill();
-}
-function radarFrame(){
-if(!radarOn)return;
-rafId=requestAnimationFrame(radarFrame);
-drawRadar();
-}
-function setBig(b){
-radarBig=b;radarEl.classList.toggle('big',b);document.body.classList.toggle('radar',b);
-map.invalidateSize();
-if(b&&me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17),{animate:false});
-}
-function shrinkRadar(){if(radarBig)setBig(false)}
-function openRadar(){
-if(radarOn)return;
-radarOn=true;
-startOri();
-$('col').classList.remove('open');
-radarEl.hidden=false;$('radarBtn').classList.add('on');
-radarDirty=true;
-radarFrame();
-}
-function closeRadar(){
-if(!radarOn)return;
-radarOn=false;cancelAnimationFrame(rafId);
-radarEl.hidden=true;$('radarBtn').classList.remove('on');
-setBig(false);
-}
-$('radarBtn').onclick=()=>radarOn?closeRadar():openRadar();
-$('rclose').onclick=()=>setBig(false);
-cv.addEventListener('click',e=>{
-if(!radarBig){setBig(true);return}
-const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
-let best=null,bd=32;
-blips.forEach(b=>{const d=Math.hypot(b.x-x,b.y-y);if(d<bd){bd=d;best=b}});
-if(!best){setBig(false);return}
-const p=best.n.p;
-map.setView([p.lat,p.lon],Math.max(map.getZoom(),18),{animate:true});
-toast(nameOf(p)+' · '+fmtD(best.n.d));
-});
-
-/* ---------- Pokéstop : faire tourner le disque pour valider un coin ---------- */
-const GROUP_M=2,SPIN_DEG=540,SPC=653.45;
-let sp=null,spRaf=null;
-const spEl=$('spin'),spSvg=$('spsvg');
-window.openPtPopup=id=>{
-const p=pts.find(q=>q.id===id);if(!p)return;
-map.closePopup();
-L.popup({offset:L.point(0,-18)}).setLatLng([p.lat,p.lon]).setContent(popHtml(p)).openOn(map);
-};
-function pointTap(id){
-const p=pts.find(q=>q.id===id);if(!p)return;
-if(p.fait)openPtPopup(id);else openSpin(p);
-}
-const spinNeighbors=p=>pts.filter(q=>q.id!==p.id&&!q.fait&&hv([+q.lat,+q.lon],[+p.lat,+p.lon])<=GROUP_M);
-function spinPaint(){
-const pr=Math.min(1,sp.total/SPIN_DEG);
-$('spfill').setAttribute('fill','hsl('+(217-77*pr)+',70%,'+(52-6*pr)+'%)');
-$('spprog').setAttribute('stroke-dashoffset',String(SPC*(1-pr)));
-$('sprot').setAttribute('transform','rotate('+sp.rot+' 110 110)');
-if(!sp.done)$('sphint').textContent=pr<.05?'Fais tourner le disque !':pr<.5?'Continue…':'Presque !';
-}
-function openSpin(p){
-map.closePopup();$('col').classList.remove('open');
-const nb=spinNeighbors(p);
-sp={p,ids:[p.id,...nb.map(q=>q.id)],rot:0,total:0,vel:0,done:false,drag:false,last:0,lt:0};
-$('sptitle').textContent=nameOf(p);
-$('spsub').textContent=nb.length?'+ '+nb.length+(nb.length>1?' autres coins':' autre coin')+' à moins de '+GROUP_M+' m : validés ensemble':'';
-spSvg.classList.remove('pop');
-spinPaint();spEl.hidden=false;
-}
-function closeSpin(){cancelAnimationFrame(spRaf);spEl.hidden=true;sp=null}
-const spAng=e=>{const r=spSvg.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))/RAD};
-function spinAdd(d){
-if(!sp||sp.done)return;
-sp.rot+=d;sp.total+=Math.abs(d);spinPaint();
-if(sp.total>=SPIN_DEG)spinFinish();
-}
-async function spinFinish(){
-const s=sp;s.done=true;cancelAnimationFrame(spRaf);
-spinPaint();
-$('sphint').textContent='Coin fait !';
-$('sptitle').textContent='✓ '+nameOf(s.p);
-spSvg.classList.add('pop');
-try{navigator.vibrate&&navigator.vibrate([60,40,120])}catch(e){}
-try{
-await api('points?id=in.('+s.ids.join(',')+')',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:true,fait_le:new Date().toISOString()})});
-toast(s.ids.length>1?s.ids.length+' coins faits !':'Coin fait !');
-setTimeout(()=>{if(sp===s)closeSpin()},800);
-load();
-}catch(e){
-if(e.message!=='login')alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colonnes « fait » et « fait_le » ?');
-if(sp===s)closeSpin();
-}
-}
-spSvg.addEventListener('pointerdown',e=>{
-if(!sp||sp.done)return;
-e.preventDefault();try{spSvg.setPointerCapture(e.pointerId)}catch(x){}
-cancelAnimationFrame(spRaf);sp.drag=true;sp.vel=0;sp.last=spAng(e);sp.lt=performance.now();
-});
-spSvg.addEventListener('pointermove',e=>{
-if(!sp||!sp.drag||sp.done)return;
-const a=spAng(e),t=performance.now();
-const d=((a-sp.last+540)%360)-180;
-sp.last=a;
-const dt=Math.max(1,t-sp.lt);sp.lt=t;
-sp.vel=sp.vel*.6+(d/dt)*.4;
-spinAdd(d);
-});
-function spEnd(){
-if(!sp||!sp.drag)return;
-sp.drag=false;
-if(performance.now()-sp.lt>80)sp.vel=0;
-if(sp.done||Math.abs(sp.vel)<=.05)return;
-let t0=performance.now();
-const step=t=>{
-if(!sp||sp.done)return;
-const dt=Math.min(40,t-t0);t0=t;
-spinAdd(sp.vel*dt);
-sp.vel*=Math.pow(.5,dt/350);
-if(sp&&!sp.done&&Math.abs(sp.vel)>.02)spRaf=requestAnimationFrame(step);
-};
-spRaf=requestAnimationFrame(step);
-}
-spSvg.addEventListener('pointerup',spEnd);
-spSvg.addEventListener('pointercancel',spEnd);
-$('spclose').onclick=closeSpin;
-$('spopt').onclick=()=>{if(!sp)return;const id=sp.p.id;closeSpin();openPtPopup(id)};
-
-/* ---------- Voiture : lance / arrête le parcours ---------- */
+/* ---------- Voiture (retour en ligne droite) ---------- */
 const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
-/* Balade : placer la voiture = départ + enregistrement GPS du trajet (trait vert) */
-const fmtT=ms=>{const m=Math.max(0,Math.round(ms/60000)),h=Math.floor(m/60);return h?h+' h '+String(m%60).padStart(2,'0')+' min':m+' min'};
-const walkStats=()=>walk?{t:Date.now()-walk.start,d:walk.dist}:null;
-let wSaveT=0,wake=null;
-function saveWalk(force){const n=Date.now();if(!walk||(!force&&n-wSaveT<5000))return;wSaveT=n;store.set('walk',JSON.stringify(walk))}
-async function keepAwake(){try{if(walk&&'wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>{wake=null})}}catch(e){wake=null}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake();else saveWalk(true)});
-window.addEventListener('pagehide',()=>saveWalk(true));
-function trackPos(pos){
-if(!walk)return;
-const acc=pos.coords.accuracy;if(acc!=null&&acc>30)return;
-const last=walk.track[walk.track.length-1],p=[pos.coords.latitude,pos.coords.longitude,Date.now()];
-const d=hv([last[0],last[1]],[p[0],p[1]]);
-if(d<5)return;
-if(d/Math.max(1,(p[2]-last[2])/1000)>10)return;
-walk.track.push(p);walk.dist+=d;wLine.addLatLng([p[0],p[1]]);saveWalk();drawRoute();
+let car=null,showCar=true,carMarker=null;
+try{car=JSON.parse(store.get('car')||'null')}catch(e){}
+const carLine=L.polyline([],{color:'#111',weight:4,opacity:.9,dashArray:'8 8',interactive:false}).addTo(map);
+function drawCar(){
+if(carMarker){map.removeLayer(carMarker);carMarker=null}
+if(!car)return;
+carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
+.bindPopup(()=>'<div class="pop"><b>Voiture</b><button class="o" onclick="placeCar()">Placer ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer</button></div>');
 }
-function startWalk(){
-if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
-car={lat:me.lat,lon:me.lon};
-walk={car,start:Date.now(),track:[[me.lat,me.lon,Date.now()]],dist:0};
-wLine.setLatLngs([[me.lat,me.lon]]);saveWalk(true);keepAwake();
-routeOn=true;plan();refresh();
-toast(order.length?'Balade démarrée : ton trajet est enregistré.':'Balade démarrée (aucun coin à faire dans le parcours).');
-}
-function endWalk(){
-car=null;walk=null;store.del('walk');wLine.setLatLngs([]);
-try{if(wake){wake.release();wake=null}}catch(e){}
-routeOn=false;map.closePopup();plan();refresh();
-}
-function confirmRemove(){
-const s=walkStats();
-const recap=s?'Balade : '+fmtT(s.t)+' · '+fmtD(s.d)+'\n\n':'';
-if(confirm(recap+'Êtes-vous sûr de vouloir supprimer le point voiture ?\nLa balade enregistrée sera effacée.'))endWalk();
-}
-window.removeCar=confirmRemove;
 window.placeCar=()=>{
 if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
-car={lat:me.lat,lon:me.lon};if(walk){walk.car=car;saveWalk(true)}
-map.closePopup();plan();refresh();toast('Voiture placée ici.');
+car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));showCar=true;map.closePopup();drawCar();drawRoute();toast('Voiture placée ici.');
 };
-$('carBtn').onclick=()=>{if(routeOn&&car)confirmRemove();else startWalk()};
-setInterval(()=>{if(walk)drawRoute()},20000);
-if(walk)keepAwake();
-
+window.removeCar=()=>{car=null;store.del('car');map.closePopup();drawCar();drawRoute()};
+$('carBtn').onclick=()=>{if(!car){placeCar();return}showCar=!showCar;drawRoute()};
+drawCar();
 /* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
 function drawZone(){
 if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
@@ -801,7 +486,7 @@ $('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('z
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
 function startDraw(){
-shrinkRadar();closeTbl();map.closePopup();$('col').classList.remove('open');
+closeTbl();map.closePopup();$('col').classList.remove('open');
 drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
 map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
 }
@@ -829,7 +514,6 @@ toast(todo+(todo>1?' coins à faire':' coin à faire')+' dans la zone');
 $('zoneBtn').onclick=()=>{if(zone){zone=null;store.del('zone');drawZone();plan();refresh();toast('Zone désactivée : tous les coins')}else startDraw()};
 $('drc').onclick=endDraw;
 drawZone();
-
 /* ---------- Export CSV (sauvegarde) ---------- */
 function exportCsv(){
 if(!pts.length){toast('Aucun coin à exporter');return}
@@ -845,6 +529,74 @@ setTimeout(()=>URL.revokeObjectURL(a.href),10000);
 toast('Export CSV : '+pts.length+' coins');
 }
 $('expBtn').onclick=exportCsv;
+/* ---------- RA : caméra + radar ---------- */
+const RAMAX=500,RAR=200;
+let raStream=null,raT=null,hd=null,raTodo=true;
+const brg=(a,b)=>{const r=Math.PI/180,dl=(b[1]-a[1])*r,y=Math.sin(dl)*Math.cos(b[0]*r),x=Math.cos(a[0]*r)*Math.sin(b[0]*r)-Math.sin(a[0]*r)*Math.cos(b[0]*r)*Math.cos(dl);return (Math.atan2(y,x)/r+360)%360};
+const tilt=(a,b,g)=>{const r=Math.PI/180,cA=Math.cos(a*r),sA=Math.sin(a*r),sB=Math.sin(b*r),cG=Math.cos(g*r),sG=Math.sin(g*r);return (Math.atan2(-cA*sG-sA*sB*cG,-sA*sG+cA*sB*cG)/r+360)%360};
+function onOri(e){
+let h=null;
+if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;
+else if((e.type==='deviceorientationabsolute'||e.absolute)&&e.alpha!=null)h=tilt(e.alpha,e.beta,e.gamma);
+if(h==null)return;
+if(hd==null)hd=h;else hd=(hd+(((h-hd+540)%360)-180)*0.25+360)%360;
+}
+async function raOpen(){
+try{
+if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission){
+if(await DeviceOrientationEvent.requestPermission()!=='granted'){toast('Boussole refusée');return}
+}
+raStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+}catch(e){toast('Caméra ou boussole indisponible (HTTPS et autorisations requis).');return}
+$('rav').srcObject=raStream;$('ra').hidden=false;hd=null;
+addEventListener('deviceorientationabsolute',onOri,true);
+addEventListener('deviceorientation',onOri,true);
+raT=setInterval(raDraw,100);
+}
+function raClose(){
+clearInterval(raT);raT=null;
+removeEventListener('deviceorientationabsolute',onOri,true);
+removeEventListener('deviceorientation',onOri,true);
+if(raStream){raStream.getTracks().forEach(t=>t.stop());raStream=null}
+$('rav').srcObject=null;$('ra').hidden=true;
+}
+function raDraw(){
+const info=$('rainfo');
+if(!me){info.textContent='Attente du GPS…';return}
+if(hd==null){info.textContent='Boussole… bouge le téléphone en 8';return}
+const W=innerWidth,fov=W>innerHeight?70:60,here=[me.lat,me.lon];
+const arr=pts.filter(p=>!raTodo||!p.fait).map(p=>{const q=[+p.lat,+p.lon];return{p,d:hv(here,q),a:((brg(here,q)-hd+540)%360)-180}})
+.filter(o=>o.d<=RAMAX).sort((x,y)=>x.d-y.d).slice(0,40);
+info.textContent=Math.round(hd)+'° · GPS ±'+Math.round(me.acc||0)+' m · '+arr.length+' coins';
+let h='',left=null,right=null;
+for(const o of arr){
+const lbl=esc(nameOf(o.p))+'<br>'+fmtD(o.d);
+if(Math.abs(o.a)<=fov/2){
+const x=50+o.a/fov*100,y=62-Math.min(o.d,200)/200*20;
+h+=`<div class="rat${o.p.fait?' ok':''}" style="left:${x}%;top:${y}%">🍄 ${lbl}</div>`;
+}else if(o.a<0){if(!left)left=o}else if(!right)right=o;
+}
+if(left)h+=`<div class="rae" style="left:8px">◀ ${esc(nameOf(left.p))}<br>${fmtD(left.d)}</div>`;
+if(right)h+=`<div class="rae" style="right:8px">${esc(nameOf(right.p))} ▶<br>${fmtD(right.d)}</div>`;
+$('rao').innerHTML=h;
+const c=$('rar').getContext('2d'),R=60;
+c.clearRect(0,0,120,120);
+c.strokeStyle='rgba(255,255,255,.4)';
+c.beginPath();c.arc(R,R,R-2,0,7);c.stroke();
+c.beginPath();c.arc(R,R,(R-2)/2,0,7);c.stroke();
+const w=fov/2*Math.PI/180;
+c.fillStyle='rgba(79,195,247,.3)';
+c.beginPath();c.moveTo(R,R);c.arc(R,R,R-2,-Math.PI/2-w,-Math.PI/2+w);c.closePath();c.fill();
+for(const o of arr){
+const r=Math.min(o.d,RAR)/RAR*(R-6),t=o.a*Math.PI/180;
+c.fillStyle=o.p.fait?'#2e9d4f':'#ffb74d';
+c.beginPath();c.arc(R+r*Math.sin(t),R-r*Math.cos(t),3.5,0,7);c.fill();
+}
+c.fillStyle='#e53935';c.beginPath();c.arc(R,R,4,0,7);c.fill();
+}
+$('raBtn').onclick=raOpen;
+$('rax').onclick=raClose;
+$('raflt').onclick=()=>{raTodo=!raTodo;$('raflt').textContent=raTodo?'À faire':'Tous'};
 if(sess)load();else showLogin();
 </script>
 </body>
