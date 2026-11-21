@@ -586,13 +586,6 @@ g.beginPath();g.arc(mx,my,R,0,7);g.fill();
 for(const k of [.25,.5,.75,1]){g.strokeStyle=k===1?'rgba(110,255,145,.9)':'rgba(110,255,145,.45)';g.lineWidth=k===1?2:1;g.beginPath();g.arc(mx,my,R*k,0,7);g.stroke()}
 g.strokeStyle='rgba(110,255,145,.35)';g.lineWidth=1;
 g.beginPath();g.moveTo(mx-R,my);g.lineTo(mx+R,my);g.moveTo(mx,my-R);g.lineTo(mx,my+R);g.stroke();
-/* balayage */
-if(g.createConicGradient){
-const sw=(now%2500)/2500*2*Math.PI-Math.PI/2;
-const gr=g.createConicGradient(sw-Math.PI/2,mx,my);
-gr.addColorStop(0,'rgba(90,255,130,0)');gr.addColorStop(.25,'rgba(90,255,130,.32)');gr.addColorStop(.2501,'rgba(90,255,130,0)');gr.addColorStop(1,'rgba(90,255,130,0)');
-g.fillStyle=gr;g.beginPath();g.arc(mx,my,R,0,7);g.fill();
-}
 /* points cardinaux (tournent avec ton cap) */
 g.font='bold '+(big?14:11)+'px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';
 const cr=R-(big?11:8);
