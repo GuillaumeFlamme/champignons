@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>We Are the CHAMPIons</title>
+<title>Champiniouf</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
@@ -24,7 +24,11 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 .mk svg{width:20px;height:20px}
 .mk.ok{background:#2e9d4f}
 .mk.new{background:var(--acc)}
-.me{width:18px;height:18px;border-radius:50%;background:#e53935;border:3px solid #fff;box-shadow:0 0 0 6px rgba(229,57,53,.3)}
+.me{position:relative;width:40px;height:40px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))}
+.me svg{width:40px;height:40px;display:block}
+.me .dot{display:none;position:absolute;left:11px;top:11px;width:18px;height:18px;border-radius:50%;background:#e53935;border:3px solid #fff;box-shadow:0 0 0 6px rgba(229,57,53,.3)}
+.me.nh .dot{display:block}
+.me.nh svg{display:none}
 .pop{min-width:170px}
 .pop button{display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:0;background:#2e9d4f;color:#fff;font-weight:800;font-size:15px}
 .pop button.o{background:#e3f0ff;color:#0d47a1;font-weight:700}
@@ -107,8 +111,11 @@ body.drawing #col,body.drawing #locate{display:none}
 .ts input{margin:0;padding:10px 12px;flex:1;min-width:0}
 #tsort{flex:none;font-size:16px;padding:10px 14px}
 .tempty{padding:18px 6px;color:var(--mut);text-align:center}
-#radar{position:absolute;left:0;right:0;top:0;height:50%;z-index:850;background:#04140a;color:#d7ffe0;display:flex;flex-direction:column;box-shadow:0 6px 24px rgba(0,0,0,.35)}
-.rh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 4px}
+#radar{position:absolute;z-index:850;left:calc(env(safe-area-inset-left,0px) + 36px);bottom:calc(env(safe-area-inset-bottom,0px) + 68px);width:min(34vw,180px);height:min(34vw,180px);color:#d7ffe0;display:flex;flex-direction:column}
+#radar.big{left:0;right:0;top:0;bottom:auto;width:auto;height:50%;background:#04140a;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.rh{display:none;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 4px}
+#radar.big .rh{display:flex}
+body.drawing #radar,body.picking #radar{display:none}
 .rh b{font-size:17px}.rh span{flex:1;color:#7fbf90;font-size:13px}
 #radar .tb.g{color:#d7ffe0;border-color:#4a8a5c}
 #rwrap{flex:1;min-height:0;position:relative}
@@ -130,7 +137,7 @@ body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 </head>
 <body>
 <div id="map"></div>
-<div id="tt">We Are the <b>CHAMPI</b>ons</div>
+<div id="tt"><b>Champi</b>niouf</div>
 <div id="v"><i id="vfill"></i></div>
 <div id="vs">Chargement…</div>
 <button class="ic" id="locate" title="Ma position">◎</button>
@@ -183,7 +190,7 @@ body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 </div>
 </div>
 <div id="radar" hidden>
-<div class="rh"><b>Radar à champi</b><span id="rsrc"></span><button class="tb g" id="rclose">Fermer</button></div>
+<div class="rh"><b>Radar à champi</b><span id="rsrc"></span><button class="tb g" id="rclose">Réduire</button></div>
 <div id="rwrap"><canvas id="rcv"></canvas></div>
 </div>
 <div id="tbl" hidden>
@@ -192,7 +199,7 @@ body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 <div id="trows"></div>
 </div>
 <div id="cfg" hidden>
-<h1>We Are the <b>CHAMPI</b>ons</h1>
+<h1><b>Champi</b>niouf</h1>
 <p>Connexion (une seule fois, tu restes connecté ensuite).</p>
 <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" autocomplete="username">
 <input id="pass" type="password" placeholder="Code" autocomplete="current-password">
@@ -343,8 +350,9 @@ me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt
 radarDirty=true;
 if(pos.coords.heading!=null&&!isNaN(pos.coords.heading)&&(pos.coords.speed||0)>0.7){gpsH=pos.coords.heading;gpsHT=Date.now()}
 trackPos(pos);
-if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
+if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me nh"><div class="dot"></div><svg viewBox="0 0 40 40"><path d="M20 3L33 35L20 28L7 35Z" fill="#e53935" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div>',iconSize:[40,40],iconAnchor:[20,20]}),interactive:false,zIndexOffset:1000}).addTo(map);
 else meMarker.setLatLng([me.lat,me.lon]);
+queueArrow();
 }
 if(navigator.geolocation)navigator.geolocation.watchPosition(onPos,()=>{},{enableHighAccuracy:true,maximumAge:5000});
 $('locate').onclick=()=>{if(me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17));else alert('Position GPS pas encore trouvée (autorise la localisation).')};
@@ -361,7 +369,7 @@ function closeSheet(){$('sheet').classList.remove('open');clearPending()}
 $('fab').onclick=()=>{closeTbl();openSheet()};
 $('close').onclick=closeSheet;
 $('useGps').onclick=clearPending;
-$('usePick').onclick=()=>{closeRadar();$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
+$('usePick').onclick=()=>{shrinkRadar();$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
 function endPick(){document.body.classList.remove('picking');$('pk').hidden=true}
 $('pkc').onclick=()=>{endPick();clearPending();openSheet()};
 $('pkok').onclick=()=>{
@@ -460,14 +468,14 @@ return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
 }).join('');
 $('trows').scrollTop=sc;
 }
-$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}closeRadar();map.closePopup();renderTable();$('tbl').hidden=false};
+$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}shrinkRadar();map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
 window.editPoint=id=>{
 const p=pts.find(q=>q.id===id);if(!p)return;
 map.closePopup();$('col').classList.remove('open');
 setTimeout(()=>{
 try{
-closeRadar();tq='';$('tsearch').value='';editId=id;pinId=id;
+shrinkRadar();tq='';$('tsearch').value='';editId=id;pinId=id;
 $('tbl').hidden=false;
 renderTable();focusPoint(p);renderTable();
 $('trows').scrollTop=0;
@@ -497,12 +505,30 @@ catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (
 }
 };
 
-/* ---------- Radar à champi : les 5 coins les plus proches, orienté selon ton cap ---------- */
+/* ---------- Cap (boussole) : flèche de position + radar à champi ---------- */
 const radarEl=$('radar'),cv=$('rcv'),g=cv.getContext('2d');
-let radarOn=false,rafId=null,near=[],radarDirty=true,hCur=null,hRaw=null,hRawT=0,gpsH=null,gpsHT=0,Rcur=0,blips=[],lastSrc='';
+let radarOn=false,radarBig=false,rafId=null,near=[],radarDirty=true,hCur=null,hRaw=null,hRawT=0,gpsH=null,gpsHT=0,blips=[],lastSrc='',oriOn=false,oriBusy=false,arrowQ=false;
 const RAD=Math.PI/180,RMAX=200;
 const bearing=(a,b)=>{const f1=a[0]*RAD,f2=b[0]*RAD,dl=(b[1]-a[1])*RAD;return (Math.atan2(Math.sin(dl)*Math.cos(f2),Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl))/RAD+360)%360};
 const shortN=s=>s.length>16?s.slice(0,15)+'…':s;
+/* cap lissé : boussole du téléphone, sinon cap GPS (en marchant), sinon nord en haut */
+function headingNow(){
+const now=Date.now();let tgt=null,src='Nord en haut';
+if(hRaw!=null&&now-hRawT<3000){tgt=hRaw;src='Boussole'}
+else if(gpsH!=null&&now-gpsHT<10000){tgt=gpsH;src='Cap GPS'}
+if(tgt!=null)hCur=hCur==null?tgt:(hCur+(((tgt-hCur+540)%360)-180)*.3+360)%360;
+return{h:tgt!=null?hCur:null,src};
+}
+/* flèche rouge de ma position */
+function updateArrow(){
+if(!meMarker)return;
+const el=meMarker.getElement(),m=el&&el.firstChild;
+if(!m)return;
+const h=headingNow().h;
+m.classList.toggle('nh',h==null);
+m.style.transform=h==null?'':'rotate('+h+'deg)';
+}
+function queueArrow(){if(arrowQ)return;arrowQ=true;requestAnimationFrame(()=>{arrowQ=false;updateArrow()})}
 function computeNear(){
 radarDirty=false;
 if(!me){near=[];return}
@@ -521,103 +547,119 @@ const rB=-Math.sin(a)*Math.sin(c)+Math.cos(a)*Math.sin(b)*Math.cos(c);
 h=(Math.atan2(rA,rB)/RAD+360)%360;
 }else h=(360-e.alpha)%360;
 }
-if(h!=null){hRaw=h;hRawT=Date.now()}
+if(h!=null){hRaw=h;hRawT=Date.now();queueArrow()}
 }
 const oriEv='ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation';
+const needGesture=typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
 async function startOri(){
+if(oriOn||oriBusy)return;
+oriBusy=true;
 try{
-if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
-if(await DeviceOrientationEvent.requestPermission()!=='granted')toast('Boussole refusée : le radar utilisera ton cap GPS quand tu marches.');
+if(needGesture&&(await DeviceOrientationEvent.requestPermission())!=='granted'){
+toast('Boussole refusée : la flèche et le radar utiliseront ton cap GPS quand tu marches.');
+oriBusy=false;return;
 }
+window.addEventListener(oriEv,onOri,true);oriOn=true;
 }catch(e){}
-if(radarOn)window.addEventListener(oriEv,onOri,true);
+oriBusy=false;
 }
+if(!needGesture)startOri();
+else document.addEventListener('click',()=>startOri(),{once:true});
+
+/* ---------- Radar : petit sur la carte (coin gauche), agrandi en demi-page au clic ---------- */
 function drawRadar(){
 const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
 if(!w||!h)return;
 if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
 g.setTransform(dpr,0,0,dpr,0,0);
 g.clearRect(0,0,w,h);
-const now=Date.now();
-let tgt=null,src='Nord en haut';
-if(hRaw!=null&&now-hRawT<3000){tgt=hRaw;src='Boussole'}
-else if(gpsH!=null&&now-gpsHT<10000){tgt=gpsH;src='Cap GPS'}
-if(tgt!=null)hCur=hCur==null?tgt:(hCur+(((tgt-hCur+540)%360)-180)*.3+360)%360;
-const hd=tgt!=null?hCur:0;
+const big=radarBig,now=Date.now();
+const hs=headingNow(),hd=hs.h==null?0:hs.h;
 if(radarDirty)computeNear();
-const lbl=me?src+' · '+near.length+(near.length>1?' coins':' coin'):src;
+const lbl=(me?hs.src+' · '+near.length+(near.length>1?' coins':' coin'):hs.src)+' · '+RMAX+' m';
 if(lbl!==lastSrc){lastSrc=lbl;$('rsrc').textContent=lbl}
-const mx=w/2,my=h/2,R=Math.max(40,Math.min(w,h)/2-14);
-Rcur=RMAX;
+const mx=w/2,my=h/2,R=Math.max(30,Math.min(w,h)/2-(big?14:4));
+const txt=(s,x,y)=>{g.lineWidth=3;g.lineJoin='round';g.strokeStyle='rgba(0,0,0,.65)';g.strokeText(s,x,y);g.fillText(s,x,y)};
 /* fond, anneaux, axes */
-g.fillStyle='rgba(8,60,25,.55)';g.beginPath();g.arc(mx,my,R,0,7);g.fill();
-g.strokeStyle='rgba(90,255,130,.35)';g.lineWidth=1;
-for(const k of [.25,.5,.75,1]){g.beginPath();g.arc(mx,my,R*k,0,7);g.stroke()}
+g.fillStyle=big?'rgba(8,60,25,.55)':'rgba(0,28,10,.38)';
+g.beginPath();g.arc(mx,my,R,0,7);g.fill();
+for(const k of [.25,.5,.75,1]){g.strokeStyle=k===1?'rgba(110,255,145,.9)':'rgba(110,255,145,.45)';g.lineWidth=k===1?2:1;g.beginPath();g.arc(mx,my,R*k,0,7);g.stroke()}
+g.strokeStyle='rgba(110,255,145,.35)';g.lineWidth=1;
 g.beginPath();g.moveTo(mx-R,my);g.lineTo(mx+R,my);g.moveTo(mx,my-R);g.lineTo(mx,my+R);g.stroke();
 /* balayage */
 if(g.createConicGradient){
 const sw=(now%2500)/2500*2*Math.PI-Math.PI/2;
 const gr=g.createConicGradient(sw-Math.PI/2,mx,my);
-gr.addColorStop(0,'rgba(90,255,130,0)');gr.addColorStop(.25,'rgba(90,255,130,.35)');gr.addColorStop(.2501,'rgba(90,255,130,0)');gr.addColorStop(1,'rgba(90,255,130,0)');
+gr.addColorStop(0,'rgba(90,255,130,0)');gr.addColorStop(.25,'rgba(90,255,130,.32)');gr.addColorStop(.2501,'rgba(90,255,130,0)');gr.addColorStop(1,'rgba(90,255,130,0)');
 g.fillStyle=gr;g.beginPath();g.arc(mx,my,R,0,7);g.fill();
 }
 /* points cardinaux (tournent avec ton cap) */
-g.font='bold 14px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';
-[['N',0,'#ff5252'],['E',90,'#9fdcb0'],['S',180,'#9fdcb0'],['O',270,'#9fdcb0']].forEach(([t,b,c])=>{const a=(b-hd)*RAD;g.fillStyle=c;g.fillText(t,mx+(R-11)*Math.sin(a),my-(R-11)*Math.cos(a))});
-/* échelle */
-g.font='11px system-ui,sans-serif';g.fillStyle='rgba(180,255,200,.75)';g.textAlign='left';g.textBaseline='alphabetic';
-g.fillText(fmtD(Math.round(Rcur/2)),mx+16,my-R/2-3);
-g.fillText(fmtD(Math.round(Rcur)),mx+16,my-R+14);
-/* coins */
+g.font='bold '+(big?14:11)+'px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';
+const cr=R-(big?11:8);
+[['N',0,'#ff5252'],['E',90,'#d7ffe0'],['S',180,'#d7ffe0'],['O',270,'#d7ffe0']].forEach(([t,b,c])=>{const a=(b-hd)*RAD;g.fillStyle=c;txt(t,mx+cr*Math.sin(a),my-cr*Math.cos(a))});
+/* échelle (grand format) */
+if(big){
+g.font='11px system-ui,sans-serif';g.fillStyle='rgba(200,255,215,.95)';g.textAlign='left';g.textBaseline='alphabetic';
+txt(fmtD(RMAX/2),mx+16,my-R/2-3);
+txt(fmtD(RMAX),mx+16,my-R+14);
+}
+/* coins à faire dans 200 m */
 blips=[];
-g.textAlign='center';g.textBaseline='middle';g.font='13px system-ui,sans-serif';g.fillStyle='#9fdcb0';
-if(!me)g.fillText('Recherche de ta position GPS…',mx,my+R*.45);
-else if(!near.length)g.fillText('Aucun coin à faire dans 200 m',mx,my+R*.45);
-near.forEach((n,i)=>{
-const a=(n.b-hd)*RAD,r=Math.min(n.d/Rcur,1)*R,x=mx+r*Math.sin(a),y=my-r*Math.cos(a);
+g.textAlign='center';g.textBaseline='middle';g.font=(big?13:11)+'px system-ui,sans-serif';g.fillStyle='#d7ffe0';
+if(!me)txt(big?'Recherche de ta position GPS…':'GPS…',mx,my+R*.45);
+else if(!near.length)txt(big?'Aucun coin à faire dans 200 m':'Aucun coin',mx,my+R*.45);
+for(let i=near.length-1;i>=0;i--){
+const n=near[i],a=(n.b-hd)*RAD,r=Math.min(n.d/RMAX,1)*R,x=mx+r*Math.sin(a),y=my-r*Math.cos(a);
 blips.push({x,y,n});
 const col=i===0?'#ffd54f':'#7CFF9B';
-g.fillStyle=col;g.beginPath();g.arc(x,y,i===0?9:7,0,7);g.fill();
-const right=x<w-80;g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
-const lx=x+(right?13:-13);
-g.fillStyle=col;g.font='bold 13px system-ui,sans-serif';g.fillText(fmtD(n.d),lx,y+4);
-if(i===0){g.fillStyle='rgba(215,255,224,.75)';g.font='11px system-ui,sans-serif';g.fillText(shortN(nameOf(n.p)),lx,y+17)}
-});
+g.fillStyle=col;g.beginPath();g.arc(x,y,big?(i===0?9:7):(i===0?6:4.5),0,7);g.fill();
+g.strokeStyle='rgba(0,0,0,.6)';g.lineWidth=1.5;g.stroke();
+if(big||i===0){
+const right=x<w-(big?80:55),off=big?13:9;
+g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
+const lx=x+(right?off:-off);
+g.font='bold '+(big?13:11)+'px system-ui,sans-serif';g.fillStyle=col;txt(fmtD(n.d),lx,y+4);
+if(big&&i===0){g.font='11px system-ui,sans-serif';g.fillStyle='rgba(215,255,224,.95)';txt(shortN(nameOf(n.p)),lx,y+17)}
+}
+}
 /* toi, au centre (toujours vers le haut) */
-g.fillStyle='#fff';g.beginPath();g.moveTo(mx,my-9);g.lineTo(mx+7,my+8);g.lineTo(mx,my+4);g.lineTo(mx-7,my+8);g.closePath();g.fill();
+const s=big?1:.75;
+g.fillStyle='#fff';g.beginPath();g.moveTo(mx,my-9*s);g.lineTo(mx+7*s,my+8*s);g.lineTo(mx,my+4*s);g.lineTo(mx-7*s,my+8*s);g.closePath();g.fill();
 }
 function radarFrame(){
 if(!radarOn)return;
 rafId=requestAnimationFrame(radarFrame);
 drawRadar();
 }
+function setBig(b){
+radarBig=b;radarEl.classList.toggle('big',b);document.body.classList.toggle('radar',b);
+map.invalidateSize();
+if(b&&me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17),{animate:false});
+}
+function shrinkRadar(){if(radarBig)setBig(false)}
 function openRadar(){
 if(radarOn)return;
 radarOn=true;
 startOri();
-closeTbl();map.closePopup();$('col').classList.remove('open');
-radarEl.hidden=false;document.body.classList.add('radar');
-$('radarBtn').classList.add('on');
-map.invalidateSize();
-if(me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17),{animate:false});
-radarDirty=true;Rcur=0;
+$('col').classList.remove('open');
+radarEl.hidden=false;$('radarBtn').classList.add('on');
+radarDirty=true;
 radarFrame();
 }
 function closeRadar(){
 if(!radarOn)return;
 radarOn=false;cancelAnimationFrame(rafId);
-window.removeEventListener(oriEv,onOri,true);
-radarEl.hidden=true;document.body.classList.remove('radar');
-$('radarBtn').classList.remove('on');
-map.invalidateSize();
+radarEl.hidden=true;$('radarBtn').classList.remove('on');
+setBig(false);
 }
 $('radarBtn').onclick=()=>radarOn?closeRadar():openRadar();
-$('rclose').onclick=closeRadar;
-cv.addEventListener('pointerdown',e=>{
+$('rclose').onclick=()=>setBig(false);
+cv.addEventListener('click',e=>{
+if(!radarBig){setBig(true);return}
 const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
 let best=null,bd=32;
 blips.forEach(b=>{const d=Math.hypot(b.x-x,b.y-y);if(d<bd){bd=d;best=b}});
-if(!best)return;
+if(!best){setBig(false);return}
 const p=best.n.p;
 map.setView([p.lat,p.lon],Math.max(map.getZoom(),18),{animate:true});
 toast(nameOf(p)+' · '+fmtD(best.n.d));
@@ -766,7 +808,7 @@ $('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('z
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
 function startDraw(){
-closeRadar();closeTbl();map.closePopup();$('col').classList.remove('open');
+shrinkRadar();closeTbl();map.closePopup();$('col').classList.remove('open');
 drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
 map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
 }
