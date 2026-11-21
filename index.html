@@ -23,7 +23,6 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 .mk{width:34px;height:34px;border-radius:50%;background:#1a73e8;border:3px solid #fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.45)}
 .mk svg{width:20px;height:20px}
 .mk.ok{background:#2e9d4f}
-.mk.st{box-shadow:0 0 0 4px var(--acc),0 2px 6px rgba(0,0,0,.45)}
 .mk.new{background:var(--acc)}
 .me{width:18px;height:18px;border-radius:50%;background:#e53935;border:3px solid #fff;box-shadow:0 0 0 6px rgba(229,57,53,.3)}
 .pop{min-width:170px}
@@ -54,7 +53,6 @@ input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--mut);bac
 .tb.g{background:transparent;border:1px solid var(--mut);color:var(--fg)}
 .tb.r{background:transparent;border:1px solid var(--red);color:var(--red)}
 .mk.car{background:#111}
-
 .ic{width:46px;height:46px;border-radius:50%;border:0;background:var(--card);color:var(--fg);box-shadow:var(--sh);font-size:19px;font-weight:700;display:grid;place-items:center;padding:0}
 .ic.on{background:var(--acc2);color:#fff}
 .ic.sm{font-size:12px;font-weight:800}
@@ -118,52 +116,47 @@ body.drawing #col,body.drawing #locate{display:none}
 <div id="vs">Chargement…</div>
 <button class="ic" id="locate" title="Ma position">◎</button>
 <div id="col">
-  <div class="act"><span>Table</span><button class="ic" id="tblBtn">≡</button></div>
-  <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
-  <div class="act"><span>Recalculer</span><button class="ic" id="recalc">↻</button></div>
-  <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
-  <div class="act"><span>Exporter en CSV</span><button class="ic sm" id="expBtn">CSV</button></div>
-  <div class="act"><span id="zoneLbl">Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
-  <button class="pri" id="plus">＋</button>
-  <button class="sig pri" id="fab">🍄 Signaler</button>
+<div class="act"><span>Table</span><button class="ic" id="tblBtn">≡</button></div>
+<div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
+<div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
+<div class="act"><span>Exporter en CSV</span><button class="ic sm" id="expBtn">CSV</button></div>
+<div class="act"><span id="zoneLbl">Prépare mon parcours</span><button class="ic sm" id="zoneBtn">Zone</button></div>
+<button class="pri" id="plus">＋</button>
+<button class="sig pri" id="fab">🍄 Signaler</button>
 </div>
 <div id="toast" hidden></div>
 <div id="dr" hidden></div>
 <div id="drb" hidden><span>Dessine une zone avec ton doigt</span><button id="drc">Annuler</button></div>
 <div id="pk" hidden><div id="pkb"><span>Déplace la carte sous le point</span><button id="pkc">Annuler</button></div><div id="pin"></div><button class="pri" id="pkok">Placer ici</button></div>
-
 <div id="sheet">
-  <div class="fh"><b>Signaler un champignon</b><button class="xb" id="close">Fermer</button></div>
-  <div class="cols">
-    <div>
-      <div class="chips" id="chips"></div>
-      <div class="seg"><button class="sg sel" id="useGps">Ma position</button><button class="sg" id="usePick">Sur la carte</button></div>
-      <div id="loc">Position : GPS du téléphone</div>
-    </div>
-    <div>
-      <div class="nbrow"><div class="st"><button id="nmin">−</button><b id="nv">1</b><button id="npl">+</button></div><small>champi</small></div>
-      <input id="ttl" placeholder="Titre (facultatif)">
-      <div id="msg"></div>
-      <button class="btn" id="send">Signaler</button>
-    </div>
-  </div>
+<div class="fh"><b>Signaler un champignon</b><button class="xb" id="close">Fermer</button></div>
+<div class="cols">
+<div>
+<div class="chips" id="chips"></div>
+<div class="seg"><button class="sg sel" id="useGps">Ma position</button><button class="sg" id="usePick">Sur la carte</button></div>
+<div id="loc">Position : GPS du téléphone</div>
 </div>
-
+<div>
+<div class="nbrow"><div class="st"><button id="nmin">−</button><b id="nv">1</b><button id="npl">+</button></div><small>champi</small></div>
+<input id="ttl" placeholder="Titre (facultatif)">
+<div id="msg"></div>
+<button class="btn" id="send">Signaler</button>
+</div>
+</div>
+</div>
 <div id="tbl" hidden>
-  <div class="th"><b>Table des coins</b><span id="tcount"></span><button class="tb g" id="tclose">Fermer</button></div>
-  <div class="ts"><input id="tsearch" type="search" placeholder="Rechercher : type, titre, fait, à faire, date…" autocomplete="off" autocorrect="off" autocapitalize="off"><button class="tb g" id="tsort" title="Trier par titre">A↕</button></div>
-  <div id="trows"></div>
+<div class="th"><b>Table des coins</b><span id="tcount"></span><button class="tb g" id="tclose">Fermer</button></div>
+<div class="ts"><input id="tsearch" type="search" placeholder="Rechercher : type, titre, fait, à faire, date…" autocomplete="off" autocorrect="off" autocapitalize="off"><button class="tb g" id="tsort" title="Trier par titre">A↕</button></div>
+<div id="trows"></div>
 </div>
-
 <div id="cfg" hidden>
-  <h1>We Are the <b>CHAMPI</b>ons</h1>
-  <p>Connexion (une seule fois, tu restes connecté ensuite).</p>
-  <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" autocomplete="username">
-  <input id="pass" type="password" placeholder="Code" autocomplete="current-password">
-  <div id="lmsg" style="color:var(--red);min-height:20px;margin-bottom:8px"></div>
-  <button class="btn" id="login">Se connecter</button>
+<h1>We Are the <b>CHAMPI</b>ons</h1>
+<p>Connexion (une seule fois, tu restes connecté ensuite).</p>
+<input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" autocomplete="username">
+<input id="pass" type="password" placeholder="Code" autocomplete="current-password">
+<div id="lmsg" style="color:var(--red);min-height:20px;margin-bottom:8px"></div>
+<button class="btn" id="login">Se connecter</button>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -176,141 +169,137 @@ let sess=null;try{sess=JSON.parse(store.get('sb_sess')||'null')}catch(e){}
 const saveSess=d=>{sess={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Math.floor(Date.now()/1000)+(d.expires_in||3600)};store.set('sb_sess',JSON.stringify(sess))};
 function showLogin(){sess=null;store.del('sb_sess');$('cfg').hidden=false}
 async function auth(body,grant){
-  const r=await fetch(URL_+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||!d.access_token)throw new Error('refus');
-  saveSess(d);
+const r=await fetch(URL_+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+const d=await r.json().catch(()=>({}));
+if(!r.ok||!d.access_token)throw new Error('refus');
+saveSess(d);
 }
 async function token(){
-  if(!sess){showLogin();throw new Error('login')}
-  if(sess.expires_at-60<Date.now()/1000){
-    try{await auth({refresh_token:sess.refresh_token},'refresh_token')}catch(e){showLogin();throw new Error('login')}
-  }
-  return sess.access_token;
+if(!sess){showLogin();throw new Error('login')}
+if(sess.expires_at-60<Date.now()/1000){
+try{await auth({refresh_token:sess.refresh_token},'refresh_token')}catch(e){showLogin();throw new Error('login')}
+}
+return sess.access_token;
 }
 async function api(path,opt={}){
-  const tk=await token();
-  const r=await fetch(URL_+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+tk,'Content-Type':'application/json',...(opt.headers||{})}});
-  if(r.status===401){showLogin();throw new Error('login')}
-  if(!r.ok)throw new Error(await r.text());
-  return r.status===204?null:r.json().catch(()=>null);
+const tk=await token();
+const r=await fetch(URL_+'/rest/v1/'+path,{...opt,headers:{apikey:KEY,Authorization:'Bearer '+tk,'Content-Type':'application/json',...(opt.headers||{})}});
+if(r.status===401){showLogin();throw new Error('login')}
+if(!r.ok)throw new Error(await r.text());
+return r.status===204?null:r.json().catch(()=>null);
 }
 $('login').onclick=async()=>{
-  $('lmsg').textContent='';
-  try{await auth({email:$('email').value.trim(),password:$('pass').value},'password');$('pass').value='';$('cfg').hidden=true;load()}
-  catch(e){$('lmsg').textContent='Email ou code incorrect.'}
+$('lmsg').textContent='';
+try{await auth({email:$('email').value.trim(),password:$('pass').value},'password');$('pass').value='';$('cfg').hidden=true;load()}
+catch(e){$('lmsg').textContent='Email ou code incorrect.'}
 };
 $('pass').onkeydown=e=>{if(e.key==='Enter')$('login').click()};
 
 /* ---------- Carte & fonds ---------- */
 const map=L.map('map',{zoomControl:false,maxZoom:21}).setView([48.409,2.606],15);
-const ign=(layer,fmt)=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=normal&FORMAT=${fmt}&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}`;
 L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{subdomains:'abc',maxNativeZoom:17,maxZoom:21,attribution:'© OpenTopoMap © OpenStreetMap'}).addTo(map);
-
 const ptLayer=L.layerGroup().addTo(map);
 const routeLine=L.polyline([],{color:'#1a73e8',weight:6,opacity:.85}).addTo(map);
-let pts=[],order=[],usedMe=false,showRoute=true,me=null,meMarker=null,fitted=false,startId=null;
+let pts=[],order=[],routeOn=false,me=null,meMarker=null,fitted=false;
+let car=null,carMarker=null;
+try{car=JSON.parse(store.get('car')||'null')}catch(e){}
 let zone=null,zonePoly=null,drawing=false,dpts=[],dline=null;
 try{zone=JSON.parse(store.get('zone')||'null')}catch(e){}
 const inPoly=(lat,lon,poly)=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const yi=poly[i][0],xi=poly[i][1],yj=poly[j][0],xj=poly[j][1];if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c}return c};
 const inZone=p=>!zone||inPoly(+p.lat,+p.lon,zone);
-
 let search=null,radius=+store.get('rad')||50;
 const MUSH='<svg viewBox="0 0 24 24"><path fill="#fff" d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path fill="#fff" d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></svg>';
 const hv=(a,b)=>{const R=6371000,r=Math.PI/180,dp=(b[0]-a[0])*r,dl=(b[1]-a[1])*r;
-  const h=Math.sin(dp/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const h=Math.sin(dp/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
 const fmtD=m=>m<1000?Math.round(m)+' m':(m/1000).toFixed(1).replace('.',',')+' km';
 const nameOf=p=>{const t=p.type||'',n=(p.title&&p.title!==t)?p.title:'';return (t&&n)?t+' – '+n:(t||n||'Coin')};
 
-/* ---------- Trajet le plus court (chemin ouvert, vol d'oiseau) ---------- */
+/* ---------- Parcours : départ voiture, plus court chemin (vol d'oiseau), retour voiture ---------- */
 function plan(){
-  usedMe=false;order=[];
-  const act=pts.map((_,i)=>i).filter(i=>(inZone(pts[i])||pts[i].id===startId)&&(!pts[i].fait||pts[i].id===startId));
-  if(!act.length)return;
-  const P=act.map(i=>[+pts[i].lat,+pts[i].lon]);
-  const si=act.findIndex(i=>pts[i].id===startId);
-  let nodes=P,off=0,fixed=-1;
-  if(si>=0)fixed=si;
-  const N=nodes.length,D=nodes.map(a=>nodes.map(b=>hv(a,b)));
-  const len=t=>{let s=0;for(let i=0;i<t.length-1;i++)s+=D[t[i]][t[i+1]];return s};
-  const opt=(t,f)=>{let imp=true;
-    while(imp){imp=false;
-      for(let i=f?1:0;i<N-1;i++)for(let j=i+1;j<N;j++){
-        const a=i>0?D[t[i-1]][t[i]]:0,b=j<N-1?D[t[j]][t[j+1]]:0;
-        const a2=i>0?D[t[i-1]][t[j]]:0,b2=j<N-1?D[t[i]][t[j+1]]:0;
-        if(a2+b2<a+b-1e-9){const seg=t.slice(i,j+1).reverse();t.splice(i,j-i+1,...seg);imp=true}
-      }}
-    return t};
-  const nn=s=>{const t=[s],left=new Set([...Array(N).keys()]);left.delete(s);
-    while(left.size){const c=t[t.length-1];let b=-1,bd=1e18;for(const k of left)if(D[c][k]<bd){bd=D[c][k];b=k}t.push(b);left.delete(b)}return t};
-  let best=null;
-  for(const s of (fixed>=0?[fixed]:[...Array(N).keys()])){const t=opt(nn(s),fixed>=0),l=len(t);if(!best||l<best[0])best=[l,t]}
-  order=best[1].filter(k=>!(off&&k===0)).map(k=>act[k-off]);
+order=[];
+if(!routeOn||!car)return;
+const act=pts.map((_,i)=>i).filter(i=>inZone(pts[i])&&!pts[i].fait);
+if(!act.length)return;
+const P=[[car.lat,car.lon],...act.map(i=>[+pts[i].lat,+pts[i].lon])];
+const N=P.length,D=P.map(a=>P.map(b=>hv(a,b)));
+/* plus proche voisin depuis la voiture (index 0) */
+const t=[0],left=new Set();
+for(let k=1;k<N;k++)left.add(k);
+while(left.size){const c=t[t.length-1];let b=-1,bd=1e18;for(const k of left)if(D[c][k]<bd){bd=D[c][k];b=k}t.push(b);left.delete(b)}
+/* amélioration 2-opt, la voiture reste en premier */
+let imp=true;
+while(imp){imp=false;
+for(let i=1;i<N-1;i++)for(let j=i+1;j<N;j++){
+const a=D[t[i-1]][t[i]],b=j<N-1?D[t[j]][t[j+1]]:0;
+const a2=D[t[i-1]][t[j]],b2=j<N-1?D[t[i]][t[j+1]]:0;
+if(a2+b2<a+b-1e-9){const seg=t.slice(i,j+1).reverse();t.splice(i,j-i+1,...seg);imp=true}
+}}
+order=t.slice(1).map(k=>act[k-1]);
 }
 
 /* ---------- Affichage ---------- */
 function popHtml(p){
-  const d=(p.t||'').slice(0,10).split('-').reverse().join('/');
-  const fd=p.fait&&p.fait_le?' · fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):'';
-  const has=search&&search.id===p.id;
-  return `<div class="pop"><b>${esc(nameOf(p))}</b><br><small>Signalé le ${esc(d)}${esc(fd)}${p.nombre?' · '+p.nombre+' champi':''}</small>
-    <button class="${p.fait?'u':''}" onclick="toggleDone(${p.id})">${p.fait?'Annuler « coin fait »':'Coin fait'}</button>
-    <button class="o" onclick="editPoint(${p.id})">Éditer</button>
-    <button class="o" onclick="setStart(${p.id})">${p.id===startId?'Retirer le départ':'Partir d\'ici'}</button>
-    <div class="rad"><input id="rad" type="number" inputmode="numeric" min="1" value="${radius}"><span>m</span><button class="o" onclick="doSearch(${p.id})">Recherche</button></div>
-    ${has?'<button class="u" onclick="clearSearch()">Effacer le rayon</button>':''}</div>`;
+const d=(p.t||'').slice(0,10).split('-').reverse().join('/');
+const fd=p.fait&&p.fait_le?' · fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):'';
+const has=search&&search.id===p.id;
+return `<div class="pop"><b>${esc(nameOf(p))}</b><br><small>Signalé le ${esc(d)}${esc(fd)}${p.nombre?' · '+p.nombre+' champi':''}</small>
+<button class="${p.fait?'u':''}" onclick="toggleDone(${p.id})">${p.fait?'Annuler « coin fait »':'Coin fait'}</button>
+<button class="o" onclick="editPoint(${p.id})">Éditer</button>
+<div class="rad"><input id="rad" type="number" inputmode="numeric" min="1" value="${radius}"><span>m</span><button class="o" onclick="doSearch(${p.id})">Recherche</button></div>
+${has?'<button class="u" onclick="clearSearch()">Effacer le rayon</button>':''}</div>`;
 }
 function drawPoints(){
-  ptLayer.clearLayers();
-  pts.forEach(p=>{
-    const cls='mk'+(p.fait?' ok':'')+(p.id===startId?' st':'')+(inZone(p)?'':' out');
-    const ic=L.divIcon({className:'',html:`<div class="${cls}">${MUSH}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
-    L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).bindPopup(()=>popHtml(p));
-  });
+ptLayer.clearLayers();
+pts.forEach(p=>{
+const cls='mk'+(p.fait?' ok':'')+(inZone(p)?'':' out');
+const ic=L.divIcon({className:'',html:`<div class="${cls}">${MUSH}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
+L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).bindPopup(()=>popHtml(p));
+});
+}
+function drawCar(){
+if(carMarker){map.removeLayer(carMarker);carMarker=null}
+if(!routeOn||!car)return;
+carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
+.bindPopup(()=>'<div class="pop"><b>Voiture</b><button class="o" onclick="placeCar()">Placer ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer</button></div>');
 }
 function drawRoute(){
-  const line=order.map(i=>[+pts[i].lat,+pts[i].lon]);
-  routeLine.setLatLngs(showRoute?line:[]);
-  carLine.setLatLngs(car&&showCar&&me?[[me.lat,me.lon],[car.lat,car.lon]]:[]);
-  $('carBtn').classList.toggle('on',!!car&&showCar);
-  const sc=pts.filter(inZone),n=sc.length,done=sc.filter(p=>p.fait).length,todo=n-done;
-  $('vfill').style.height=(n?done/n*100:0)+'%';
-  if(!n){$('vs').textContent='Aucun coin';return}
-  let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
-  $('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}<br>`+(todo?fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':'Tout est fait');
+const line=(routeOn&&car&&order.length)?[[car.lat,car.lon],...order.map(i=>[+pts[i].lat,+pts[i].lon]),[car.lat,car.lon]]:[];
+routeLine.setLatLngs(line);
+$('carBtn').classList.toggle('on',routeOn);
+const sc=pts.filter(inZone),n=sc.length,done=sc.filter(p=>p.fait).length,todo=n-done;
+$('vfill').style.height=(n?done/n*100:0)+'%';
+if(!n){$('vs').textContent='Aucun coin';return}
+let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
+$('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}`+(todo?(line.length?'<br>'+fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':''):'<br>Tout est fait');
 }
-function refresh(){drawPoints();drawRoute()}
+function refresh(){drawPoints();drawRoute();drawCar()}
 let toastT=null;
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,5000)}
 async function load(){
-  try{pts=await api('points?select=*&order=t.asc&limit=5000');pts=pts.filter(p=>p.lat!=null&&p.lon!=null);
-    if(pts.length&&pts.every(p=>p.fait)){
-      await api('points?fait=eq.true',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:false,fait_le:null})});
-      pts.forEach(p=>{p.fait=false;p.fait_le=null});
-      toast('Balade terminée : tous les coins sont remis à zéro.');
-    }
-    plan();refresh();
-    if(!fitted&&pts.length){map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[60,60]});fitted=true}
-  }catch(e){if(e.message==='login')return;toast('Erreur de lecture : vérifie la connexion, la clé et la table points.')}
+try{pts=await api('points?select=*&order=t.asc&limit=5000');pts=pts.filter(p=>p.lat!=null&&p.lon!=null);
+if(pts.length&&pts.every(p=>p.fait)){
+await api('points?fait=eq.true',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:false,fait_le:null})});
+pts.forEach(p=>{p.fait=false;p.fait_le=null});
+toast('Balade terminée : tous les coins sont remis à zéro.');
+}
+plan();refresh();
+if(!fitted&&pts.length){map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[60,60]});fitted=true}
+}catch(e){if(e.message==='login')return;toast('Erreur de lecture : vérifie la connexion, la clé et la table points.')}
 }
 window.toggleDone=async id=>{
-  const p=pts.find(q=>q.id===id);if(!p)return;
-  try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:!p.fait,fait_le:p.fait?null:new Date().toISOString()})});map.closePopup();load()}
-  catch(e){alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colonnes « fait » et « fait_le » ?')}
+const p=pts.find(q=>q.id===id);if(!p)return;
+try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:!p.fait,fait_le:p.fait?null:new Date().toISOString()})});map.closePopup();load()}
+catch(e){alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colonnes « fait » et « fait_le » ?')}
 };
-window.setStart=id=>{startId=(id===startId)?null:id;map.closePopup();plan();refresh()};
 
 /* ---------- GPS ---------- */
 function onPos(pos){
-  const first=!me;
-  me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt:pos.coords.altitude};
-  if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
-  else meMarker.setLatLng([me.lat,me.lon]);
-  drawRoute();
+me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt:pos.coords.altitude};
+if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
+else meMarker.setLatLng([me.lat,me.lon]);
 }
 if(navigator.geolocation)navigator.geolocation.watchPosition(onPos,()=>{},{enableHighAccuracy:true,maximumAge:5000});
 $('locate').onclick=()=>{if(me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17));else alert('Position GPS pas encore trouvée (autorise la localisation).')};
-$('recalc').onclick=()=>{plan();refresh()};
 
 /* ---------- Signalement ---------- */
 const SP=['Bolet','Cèpe','Girolle','Morille','Trompette','Pied de mouton','Autre'];let sel=null,pending=null,tmp=null,nb=1;
@@ -328,25 +317,25 @@ $('usePick').onclick=()=>{$('sheet').classList.remove('open');document.body.clas
 function endPick(){document.body.classList.remove('picking');$('pk').hidden=true}
 $('pkc').onclick=()=>{endPick();clearPending();openSheet()};
 $('pkok').onclick=()=>{
-  const c=map.getCenter();pending={lat:c.lat,lon:c.lng};
-  if(tmp)map.removeLayer(tmp);
-  tmp=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mk new">'+MUSH+'</div>',iconSize:[34,34],iconAnchor:[17,17]})}).addTo(map);
-  $('useGps').classList.remove('sel');$('usePick').classList.add('sel');
-  $('loc').textContent='Position : point choisi sur la carte';
-  endPick();openSheet();
+const c=map.getCenter();pending={lat:c.lat,lon:c.lng};
+if(tmp)map.removeLayer(tmp);
+tmp=L.marker(c,{icon:L.divIcon({className:'',html:'<div class="mk new">'+MUSH+'</div>',iconSize:[34,34],iconAnchor:[17,17]})}).addTo(map);
+$('useGps').classList.remove('sel');$('usePick').classList.add('sel');
+$('loc').textContent='Position : point choisi sur la carte';
+endPick();openSheet();
 };
 async function post(lat,lon,alt){
-  try{
-    await api('points',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:($('ttl').value.trim()||sel),type:sel,nombre:nb,lat,lon,alt,t:new Date().toISOString(),fait:false})});
-    $('ttl').value='';setNb(1);closeSheet();await load();
-  }catch(e){$('msg').textContent=/column/i.test(e.message)?'Colonne manquante : lance d\'abord le SQL (type, fait, fait_le, nombre).':'Envoi refusé (vérifie la politique RLS de Supabase).'}
+try{
+await api('points',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:($('ttl').value.trim()||sel),type:sel,nombre:nb,lat,lon,alt,t:new Date().toISOString(),fait:false})});
+$('ttl').value='';setNb(1);closeSheet();await load();
+}catch(e){$('msg').textContent=/column/i.test(e.message)?'Colonne manquante : lance d\'abord le SQL (type, fait, fait_le, nombre).':'Envoi refusé (vérifie la politique RLS de Supabase).'}
 }
 $('send').onclick=()=>{
-  if(!sel){$('msg').textContent='Choisis un type de champignon.';return}
-  if(pending){post(pending.lat,pending.lon,null);return}
-  if(!navigator.geolocation){$('msg').textContent='GPS indisponible.';return}
-  $('msg').textContent='Recherche de ta position…';
-  navigator.geolocation.getCurrentPosition(p=>post(p.coords.latitude,p.coords.longitude,p.coords.altitude),()=>{$('msg').textContent='Position refusée ou introuvable.'},{enableHighAccuracy:true,timeout:20000});
+if(!sel){$('msg').textContent='Choisis un type de champignon.';return}
+if(pending){post(pending.lat,pending.lon,null);return}
+if(!navigator.geolocation){$('msg').textContent='GPS indisponible.';return}
+$('msg').textContent='Recherche de ta position…';
+navigator.geolocation.getCurrentPosition(p=>post(p.coords.latitude,p.coords.longitude,p.coords.altitude),()=>{$('msg').textContent='Position refusée ou introuvable.'},{enableHighAccuracy:true,timeout:20000});
 };
 
 /* ---------- Bouton + (actions) ---------- */
@@ -356,144 +345,143 @@ map.on('click',()=>$('col').classList.remove('open'));
 
 /* ---------- Recherche (rayon) ---------- */
 window.doSearch=id=>{
-  const p=pts.find(q=>q.id===id);if(!p)return;
-  const r=parseFloat($('rad').value);
-  if(!(r>0)){alert('Indique un rayon en mètres.');return}
-  radius=r;store.set('rad',String(r));
-  if(search)map.removeLayer(search.circle);
-  const c=L.circle([p.lat,p.lon],{radius:r,color:'#1a73e8',weight:2,dashArray:'6 6',fillColor:'#1a73e8',fillOpacity:.12,interactive:false}).addTo(map);
-  search={id,circle:c};map.closePopup();map.fitBounds(c.getBounds(),{padding:[40,40]});
+const p=pts.find(q=>q.id===id);if(!p)return;
+const r=parseFloat($('rad').value);
+if(!(r>0)){alert('Indique un rayon en mètres.');return}
+radius=r;store.set('rad',String(r));
+if(search)map.removeLayer(search.circle);
+const c=L.circle([p.lat,p.lon],{radius:r,color:'#1a73e8',weight:2,dashArray:'6 6',fillColor:'#1a73e8',fillOpacity:.12,interactive:false}).addTo(map);
+search={id,circle:c};map.closePopup();map.fitBounds(c.getBounds(),{padding:[40,40]});
 };
 window.clearSearch=()=>{if(search){map.removeLayer(search.circle);search=null}map.closePopup()};
 
 /* ---------- Remise à zéro ---------- */
 $('raz').onclick=async()=>{
-  if(!pts.some(p=>p.fait)){toast('Aucun coin fait à remettre à zéro.');return}
-  if(!confirm('Remettre tous les coins à zéro ?'))return;
-  try{await api('points?fait=eq.true',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:false,fait_le:null})});await load();toast('Coins remis à zéro.')}
-  catch(e){toast('Impossible de remettre à zéro.')}
+if(!pts.some(p=>p.fait)){toast('Aucun coin fait à remettre à zéro.');return}
+if(!confirm('Remettre tous les coins à zéro ?'))return;
+try{await api('points?fait=eq.true',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:false,fait_le:null})});await load();toast('Coins remis à zéro.')}
+catch(e){toast('Impossible de remettre à zéro.')}
 };
 
 /* ---------- Table (moitié basse) ---------- */
 let editId=null,selId=null,hl=null;
 function focusPoint(p){
-  const z=Math.max(map.getZoom(),17),h=$('tbl').hidden?0:$('tbl').offsetHeight;
-  const c=map.project([p.lat,p.lon],z).add([0,h/2]);
-  map.setView(map.unproject(c,z),z,{animate:false});
-  if(hl)map.removeLayer(hl);
-  hl=L.circleMarker([p.lat,p.lon],{radius:26,color:'#4fc3f7',weight:4,fill:false,interactive:false}).addTo(map);
-  selId=p.id;
+const z=Math.max(map.getZoom(),17),h=$('tbl').hidden?0:$('tbl').offsetHeight;
+const c=map.project([p.lat,p.lon],z).add([0,h/2]);
+map.setView(map.unproject(c,z),z,{animate:false});
+if(hl)map.removeLayer(hl);
+hl=L.circleMarker([p.lat,p.lon],{radius:26,color:'#4fc3f7',weight:4,fill:false,interactive:false}).addTo(map);
+selId=p.id;
 }
 function closeTbl(){pinId=null;tq='';tsort=0;updSort();$('tsearch').value='';$('tbl').hidden=true;editId=null;selId=null;if(hl){map.removeLayer(hl);hl=null}}
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 let tq='',tsort=0,pinId=null;
 function tableFiltered(){
-  const words=norm(tq).split(/\s+/).filter(Boolean);
-  const all=[...pts].reverse();
-  if(!words.length)return all;
-  return all.filter(p=>{
-    if(p.id===editId)return true;
-    const hay=norm([nameOf(p),p.type,p.title,p.nombre?p.nombre+' champi':'',p.fait?'fait':'a faire',(p.t||'').slice(0,10).split('-').reverse().join('/'),p.fait&&p.fait_le?'fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):''].join(' '));
-    return words.every(w=>hay.includes(w));
-  });
+const words=norm(tq).split(/\s+/).filter(Boolean);
+const all=[...pts].reverse();
+if(!words.length)return all;
+return all.filter(p=>{
+if(p.id===editId)return true;
+const hay=norm([nameOf(p),p.type,p.title,p.nombre?p.nombre+' champi':'',p.fait?'fait':'a faire',(p.t||'').slice(0,10).split('-').reverse().join('/'),p.fait&&p.fait_le?'fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):''].join(' '));
+return words.every(w=>hay.includes(w));
+});
 }
 function tableList(){
-  let out=tableFiltered();
-  if(tsort)out=[...out].sort((a,b)=>tsort*nameOf(a).localeCompare(nameOf(b),'fr',{sensitivity:'base',numeric:true}));
-  if(pinId!=null&&editId===pinId){const i=out.findIndex(p=>p.id===pinId);if(i>0)out=[out[i],...out.slice(0,i),...out.slice(i+1)]}
-  return out;
+let out=tableFiltered();
+if(tsort)out=[...out].sort((a,b)=>tsort*nameOf(a).localeCompare(nameOf(b),'fr',{sensitivity:'base',numeric:true}));
+if(pinId!=null&&editId===pinId){const i=out.findIndex(p=>p.id===pinId);if(i>0)out=[out[i],...out.slice(0,i),...out.slice(i+1)]}
+return out;
 }
 function updSort(){$('tsort').textContent=tsort===0?'A↕':tsort===1?'A↑':'A↓'}
 function renderTable(){
-  const sc=$('trows').scrollTop;
-  const list=tableList();
-  $('tcount').textContent=(list.length===pts.length?pts.length:list.length+' / '+pts.length)+' coins';
-  const types=[...new Set([...SP,...pts.map(p=>p.type).filter(Boolean)])];
-  $('trows').innerHTML=(list.length?'':'<div class="tempty">Aucun résultat</div>')+list.map(p=>{
-    const sub=[p.nombre?p.nombre+' champi':'',p.fait?'fait':'à faire',(p.t||'').slice(0,10).split('-').reverse().join('/')].filter(Boolean).join(' · ');
-    const form=editId===p.id?`<div class="fm">
-      <input class="f-title" placeholder="Titre" value="${esc(p.title||'')}" style="margin-bottom:8px">
-      <div class="l"><select class="f-type"><option value="">Type</option>${types.map(t=>`<option${t===p.type?' selected':''}>${esc(t)}</option>`).join('')}</select>
-        <input class="f-nb" type="number" inputmode="numeric" min="0" value="${p.nombre??''}" placeholder="Nombre" style="width:100px"></div>
-      <label><input class="f-fait" type="checkbox"${p.fait?' checked':''}> Coin fait</label>
-      <div class="l"><button class="tb" data-a="save" style="flex:1">Enregistrer</button><button class="tb g" data-a="cancel" style="flex:1">Annuler</button></div></div>`:'';
-    return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
-      <div class="tn"><b>${esc(nameOf(p))}</b><small>${esc(sub)}</small></div>
-      <div class="ta"><button class="tb g" data-a="edit">Modifier</button><button class="tb g" data-a="see">Voir</button><button class="tb r" data-a="del">Supprimer</button></div>${form}</div>`;
-  }).join('');
-  $('trows').scrollTop=sc;
+const sc=$('trows').scrollTop;
+const list=tableList();
+$('tcount').textContent=(list.length===pts.length?pts.length:list.length+' / '+pts.length)+' coins';
+const types=[...new Set([...SP,...pts.map(p=>p.type).filter(Boolean)])];
+$('trows').innerHTML=(list.length?'':'<div class="tempty">Aucun résultat</div>')+list.map(p=>{
+const sub=[p.nombre?p.nombre+' champi':'',p.fait?'fait':'à faire',(p.t||'').slice(0,10).split('-').reverse().join('/')].filter(Boolean).join(' · ');
+const form=editId===p.id?`<div class="fm">
+<input class="f-title" placeholder="Titre" value="${esc(p.title||'')}" style="margin-bottom:8px">
+<div class="l"><select class="f-type"><option value="">Type</option>${types.map(t=>`<option${t===p.type?' selected':''}>${esc(t)}</option>`).join('')}</select>
+<input class="f-nb" type="number" inputmode="numeric" min="0" value="${p.nombre??''}" placeholder="Nombre" style="width:100px"></div>
+<label><input class="f-fait" type="checkbox"${p.fait?' checked':''}> Coin fait</label>
+<div class="l"><button class="tb" data-a="save" style="flex:1">Enregistrer</button><button class="tb g" data-a="cancel" style="flex:1">Annuler</button></div></div>`:'';
+return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
+<div class="tn"><b>${esc(nameOf(p))}</b><small>${esc(sub)}</small></div>
+<div class="ta"><button class="tb g" data-a="edit">Modifier</button><button class="tb g" data-a="see">Voir</button><button class="tb r" data-a="del">Supprimer</button></div>${form}</div>`;
+}).join('');
+$('trows').scrollTop=sc;
 }
 $('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
 window.editPoint=id=>{
-  const p=pts.find(q=>q.id===id);if(!p)return;
-  map.closePopup();$('col').classList.remove('open');
-  setTimeout(()=>{
-    try{
-      tq='';$('tsearch').value='';editId=id;pinId=id;
-      $('tbl').hidden=false;
-      renderTable();focusPoint(p);renderTable();
-      $('trows').scrollTop=0;
-    }catch(err){toast('Édition impossible : '+err.message)}
-  },0);
+const p=pts.find(q=>q.id===id);if(!p)return;
+map.closePopup();$('col').classList.remove('open');
+setTimeout(()=>{
+try{
+tq='';$('tsearch').value='';editId=id;pinId=id;
+$('tbl').hidden=false;
+renderTable();focusPoint(p);renderTable();
+$('trows').scrollTop=0;
+}catch(err){toast('Édition impossible : '+err.message)}
+},0);
 };
 $('tsort').onclick=()=>{tsort=tsort===1?-1:1;updSort();renderTable()};
 $('tsearch').oninput=e=>{tq=e.target.value;renderTable()};
 $('trows').onclick=async e=>{
-  const a=e.target.dataset.a;if(!a)return;
-  const row=e.target.closest('.tr'),id=+row.dataset.id,p=pts.find(q=>q.id===id);if(!p)return;
-  if(a==='cancel'){editId=null;renderTable();return}
-  focusPoint(p);
-  if(a==='see'){renderTable();return}
-  if(a==='edit'){editId=(editId===id)?null:id;renderTable();return}
-  if(a==='del'){
-    if(!confirm('Supprimer « '+nameOf(p)+' » ?')){renderTable();return}
-    try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(startId===id)startId=null;if(hl){map.removeLayer(hl);hl=null}selId=null;editId=null;await load();renderTable();toast('Supprimé.')}
-    catch(err){toast('Suppression impossible.')}
-    return;
-  }
-  if(a==='save'){
-    const fait=row.querySelector('.f-fait').checked,nb=parseInt(row.querySelector('.f-nb').value,10);
-    const body={title:row.querySelector('.f-title').value.trim(),type:row.querySelector('.f-type').value||null,nombre:isNaN(nb)?null:nb,fait,fait_le:fait?(p.fait&&p.fait_le?p.fait_le:new Date().toISOString()):null};
-    try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(body)});editId=null;await load();renderTable();toast('Enregistré.')}
-    catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (nombre).':'Enregistrement impossible.')}
-  }
+const a=e.target.dataset.a;if(!a)return;
+const row=e.target.closest('.tr'),id=+row.dataset.id,p=pts.find(q=>q.id===id);if(!p)return;
+if(a==='cancel'){editId=null;renderTable();return}
+focusPoint(p);
+if(a==='see'){renderTable();return}
+if(a==='edit'){editId=(editId===id)?null:id;renderTable();return}
+if(a==='del'){
+if(!confirm('Supprimer « '+nameOf(p)+' » ?')){renderTable();return}
+try{await api('points?id=eq.'+id,{method:'DELETE'});if(search&&search.id===id)clearSearch();if(hl){map.removeLayer(hl);hl=null}selId=null;editId=null;await load();renderTable();toast('Supprimé.')}
+catch(err){toast('Suppression impossible.')}
+return;
+}
+if(a==='save'){
+const fait=row.querySelector('.f-fait').checked,nb=parseInt(row.querySelector('.f-nb').value,10);
+const body={title:row.querySelector('.f-title').value.trim(),type:row.querySelector('.f-type').value||null,nombre:isNaN(nb)?null:nb,fait,fait_le:fait?(p.fait&&p.fait_le?p.fait_le:new Date().toISOString()):null};
+try{await api('points?id=eq.'+id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(body)});editId=null;await load();renderTable();toast('Enregistré.')}
+catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (nombre).':'Enregistrement impossible.')}
+}
 };
 
-/* ---------- Voiture (retour en ligne droite) ---------- */
+/* ---------- Voiture : lance / arrête le parcours ---------- */
 const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
-let car=null,showCar=true,carMarker=null;
-try{car=JSON.parse(store.get('car')||'null')}catch(e){}
-const carLine=L.polyline([],{color:'#111',weight:4,opacity:.9,dashArray:'8 8',interactive:false}).addTo(map);
-function drawCar(){
-  if(carMarker){map.removeLayer(carMarker);carMarker=null}
-  if(!car)return;
-  carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
-    .bindPopup(()=>'<div class="pop"><b>Voiture</b><button class="o" onclick="placeCar()">Placer ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer</button></div>');
-}
 window.placeCar=()=>{
-  if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
-  car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));showCar=true;map.closePopup();drawCar();drawRoute();toast('Voiture placée ici.');
+if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
+car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));
+routeOn=true;map.closePopup();plan();refresh();toast('Voiture placée ici.');
 };
-window.removeCar=()=>{car=null;store.del('car');map.closePopup();drawCar();drawRoute()};
-$('carBtn').onclick=()=>{if(!car){placeCar();return}showCar=!showCar;drawRoute()};
-drawCar();
+window.removeCar=()=>{car=null;store.del('car');routeOn=false;map.closePopup();plan();refresh()};
+$('carBtn').onclick=()=>{
+if(routeOn){routeOn=false;plan();refresh();return}
+if(!car){
+if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
+car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));
+}
+routeOn=true;plan();refresh();
+if(!order.length)toast('Aucun coin à faire dans le parcours.');
+};
 
 /* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
 function drawZone(){
-  if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
-  if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fillColor:'#ff9800',fillOpacity:.06,interactive:false}).addTo(map);
-  $('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('zoneBtn').classList.toggle('on',!!zone);
+if(zonePoly){map.removeLayer(zonePoly);zonePoly=null}
+if(zone)zonePoly=L.polygon(zone,{color:'#ff9800',weight:3,dashArray:'8 6',fillColor:'#ff9800',fillOpacity:.06,interactive:false}).addTo(map);
+$('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('zoneBtn').classList.toggle('on',!!zone);
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
 function startDraw(){
-  closeTbl();map.closePopup();$('col').classList.remove('open');
-  drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
-  map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
+closeTbl();map.closePopup();$('col').classList.remove('open');
+drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
+map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
 }
 function endDraw(){
-  drawing=false;document.body.classList.remove('drawing');$('dr').hidden=true;$('drb').hidden=true;
-  map.dragging.enable();map.touchZoom.enable();map.doubleClickZoom.enable();resetLine();
+drawing=false;document.body.classList.remove('drawing');$('dr').hidden=true;$('drb').hidden=true;
+map.dragging.enable();map.touchZoom.enable();map.doubleClickZoom.enable();resetLine();
 }
 const dr=$('dr');
 const lp=e=>{const r=map.getContainer().getBoundingClientRect();return map.containerPointToLatLng(L.point(e.clientX-r.left,e.clientY-r.top))};
@@ -501,16 +489,16 @@ dr.addEventListener('pointerdown',e=>{e.preventDefault();try{dr.setPointerCaptur
 dr.addEventListener('pointermove',e=>{if(!dline)return;dpts.push(lp(e));dline.setLatLngs(dpts)});
 dr.addEventListener('pointercancel',resetLine);
 dr.addEventListener('pointerup',()=>{
-  if(!dline)return;
-  if(dpts.length<8){toast('Dessine une zone plus grande');resetLine();return}
-  const poly=dpts.map(l=>[l.lat,l.lng]);
-  const inside=pts.filter(p=>inPoly(+p.lat,+p.lon,poly));
-  if(!inside.length){toast('Aucun coin dans cette zone, réessaie');resetLine();return}
-  zone=poly;store.set('zone',JSON.stringify(zone));
-  endDraw();drawZone();plan();refresh();
-  map.fitBounds(zonePoly.getBounds(),{padding:[60,60]});
-  const todo=inside.filter(p=>!p.fait).length;
-  toast(todo+(todo>1?' coins à faire':' coin à faire')+' dans la zone');
+if(!dline)return;
+if(dpts.length<8){toast('Dessine une zone plus grande');resetLine();return}
+const poly=dpts.map(l=>[l.lat,l.lng]);
+const inside=pts.filter(p=>inPoly(+p.lat,+p.lon,poly));
+if(!inside.length){toast('Aucun coin dans cette zone, réessaie');resetLine();return}
+zone=poly;store.set('zone',JSON.stringify(zone));
+endDraw();drawZone();plan();refresh();
+map.fitBounds(zonePoly.getBounds(),{padding:[60,60]});
+const todo=inside.filter(p=>!p.fait).length;
+toast(todo+(todo>1?' coins à faire':' coin à faire')+' dans la zone');
 });
 $('zoneBtn').onclick=()=>{if(zone){zone=null;store.del('zone');drawZone();plan();refresh();toast('Zone désactivée : tous les coins')}else startDraw()};
 $('drc').onclick=endDraw;
@@ -518,20 +506,19 @@ drawZone();
 
 /* ---------- Export CSV (sauvegarde) ---------- */
 function exportCsv(){
-  if(!pts.length){toast('Aucun coin à exporter');return}
-  const q=v=>{v=v==null?'':String(v);return /[";\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const head=['id','titre','type','nombre','latitude','longitude','altitude','date_signalement','fait','date_fait'];
-  const lines=[head.join(';')].concat(pts.map(p=>[p.id,p.title,p.type,p.nombre,p.lat,p.lon,p.alt,p.t,p.fait?'oui':'non',p.fait_le].map(q).join(';')));
-  const blob=new Blob(['﻿'+lines.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='champignons_'+new Date().toISOString().slice(0,10)+'.csv';
-  document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),10000);
-  toast('Export CSV : '+pts.length+' coins');
+if(!pts.length){toast('Aucun coin à exporter');return}
+const q=v=>{v=v==null?'':String(v);return /[";\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const head=['id','titre','type','nombre','latitude','longitude','altitude','date_signalement','fait','date_fait'];
+const lines=[head.join(';')].concat(pts.map(p=>[p.id,p.title,p.type,p.nombre,p.lat,p.lon,p.alt,p.t,p.fait?'oui':'non',p.fait_le].map(q).join(';')));
+const blob=new Blob(['\uFEFF'+lines.join('\r\n')+'\r\n'],{type:'text/csv;charset=utf-8'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='champignons_'+new Date().toISOString().slice(0,10)+'.csv';
+document.body.appendChild(a);a.click();a.remove();
+setTimeout(()=>URL.revokeObjectURL(a.href),10000);
+toast('Export CSV : '+pts.length+' coins');
 }
 $('expBtn').onclick=exportCsv;
-
 if(sess)load();else showLogin();
 </script>
 </body>
