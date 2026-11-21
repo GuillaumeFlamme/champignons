@@ -116,6 +116,16 @@ body.drawing #col,body.drawing #locate{display:none}
 body.radar #map{top:50%}
 body.radar #tt{display:none}
 body.radar #v,body.radar #vs{top:calc(50% + 10px)}
+#spin{position:absolute;inset:0;z-index:950;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:16px}
+#spbox{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff;text-align:center;width:100%}
+#sptitle{font-size:20px;font-weight:800}
+#spsub{font-size:14px;color:#cfe8ff;min-height:18px}
+#spsvg{width:min(80vw,340px,50vh);height:auto;touch-action:none;cursor:grab;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5))}
+#spsvg.pop{animation:sppop .5s ease-out}
+@keyframes sppop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+#sphint{font-size:16px;font-weight:700;min-height:22px}
+.sprow{display:flex;gap:10px;margin-top:6px}
+#spin .tb.g{color:#fff;border-color:rgba(255,255,255,.5)}
 </style>
 </head>
 <body>
@@ -152,6 +162,24 @@ body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 <div id="msg"></div>
 <button class="btn" id="send">Signaler</button>
 </div>
+</div>
+</div>
+<div id="spin" hidden>
+<div id="spbox">
+<div id="sptitle"></div>
+<div id="spsub"></div>
+<svg id="spsvg" viewBox="0 0 220 220">
+<circle cx="110" cy="110" r="104" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="8"/>
+<circle id="spprog" cx="110" cy="110" r="104" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-dasharray="653.45" stroke-dashoffset="653.45" transform="rotate(-90 110 110)"/>
+<g id="sprot">
+<circle id="spfill" cx="110" cy="110" r="88" fill="#1a73e8"/>
+<circle cx="110" cy="110" r="88" fill="none" stroke="#fff" stroke-width="4"/>
+<g fill="#fff" opacity=".85"><circle cx="110" cy="40" r="8"/><circle cx="159.5" cy="60.5" r="4"/><circle cx="180" cy="110" r="4"/><circle cx="159.5" cy="159.5" r="4"/><circle cx="110" cy="180" r="4"/><circle cx="60.5" cy="159.5" r="4"/><circle cx="40" cy="110" r="4"/><circle cx="60.5" cy="60.5" r="4"/></g>
+<g transform="translate(70 70) scale(3.3333)" fill="#fff"><path d="M12 3C6.5 3 3 7 3 11.5c0 .8.6 1.5 1.5 1.5h15c.9 0 1.5-.7 1.5-1.5C21 7 17.5 3 12 3z"/><path d="M9.5 14h5v4.5a2.5 2.5 0 0 1-5 0V14z"/></g>
+</g>
+</svg>
+<div id="sphint"></div>
+<div class="sprow"><button class="tb g" id="spopt">Options</button><button class="tb g" id="spclose">Fermer</button></div>
 </div>
 </div>
 <div id="radar" hidden>
@@ -260,7 +288,7 @@ const d=(p.t||'').slice(0,10).split('-').reverse().join('/');
 const fd=p.fait&&p.fait_le?' · fait le '+p.fait_le.slice(0,10).split('-').reverse().join('/'):'';
 const has=search&&search.id===p.id;
 return `<div class="pop"><b>${esc(nameOf(p))}</b><br><small>Signalé le ${esc(d)}${esc(fd)}${p.nombre?' · '+p.nombre+' champi':''}</small>
-<button class="${p.fait?'u':''}" onclick="toggleDone(${p.id})">${p.fait?'Annuler « coin fait »':'Coin fait'}</button>
+${p.fait?`<button class="u" onclick="toggleDone(${p.id})">Annuler « coin fait »</button>`:''}
 <button class="o" onclick="editPoint(${p.id})">Éditer</button>
 <div class="rad"><input id="rad" type="number" inputmode="numeric" min="1" value="${radius}"><span>m</span><button class="o" onclick="doSearch(${p.id})">Recherche</button></div>
 ${has?'<button class="u" onclick="clearSearch()">Effacer le rayon</button>':''}</div>`;
@@ -270,7 +298,7 @@ ptLayer.clearLayers();
 pts.forEach(p=>{
 const cls='mk'+(p.fait?' ok':'')+(inZone(p)?'':' out');
 const ic=L.divIcon({className:'',html:`<div class="${cls}">${MUSH}</div>`,iconSize:[34,34],iconAnchor:[17,17]});
-L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).bindPopup(()=>popHtml(p));
+L.marker([p.lat,p.lon],{icon:ic}).addTo(ptLayer).on('click',()=>pointTap(p.id));
 });
 }
 function drawCar(){
@@ -594,6 +622,94 @@ const p=best.n.p;
 map.setView([p.lat,p.lon],Math.max(map.getZoom(),18),{animate:true});
 toast(nameOf(p)+' · '+fmtD(best.n.d));
 });
+
+/* ---------- Pokéstop : faire tourner le disque pour valider un coin ---------- */
+const GROUP_M=2,SPIN_DEG=540,SPC=653.45;
+let sp=null,spRaf=null;
+const spEl=$('spin'),spSvg=$('spsvg');
+window.openPtPopup=id=>{
+const p=pts.find(q=>q.id===id);if(!p)return;
+map.closePopup();
+L.popup({offset:L.point(0,-18)}).setLatLng([p.lat,p.lon]).setContent(popHtml(p)).openOn(map);
+};
+function pointTap(id){
+const p=pts.find(q=>q.id===id);if(!p)return;
+if(p.fait)openPtPopup(id);else openSpin(p);
+}
+const spinNeighbors=p=>pts.filter(q=>q.id!==p.id&&!q.fait&&hv([+q.lat,+q.lon],[+p.lat,+p.lon])<=GROUP_M);
+function spinPaint(){
+const pr=Math.min(1,sp.total/SPIN_DEG);
+$('spfill').setAttribute('fill','hsl('+(217-77*pr)+',70%,'+(52-6*pr)+'%)');
+$('spprog').setAttribute('stroke-dashoffset',String(SPC*(1-pr)));
+$('sprot').setAttribute('transform','rotate('+sp.rot+' 110 110)');
+if(!sp.done)$('sphint').textContent=pr<.05?'Fais tourner le disque !':pr<.5?'Continue…':'Presque !';
+}
+function openSpin(p){
+map.closePopup();$('col').classList.remove('open');
+const nb=spinNeighbors(p);
+sp={p,ids:[p.id,...nb.map(q=>q.id)],rot:0,total:0,vel:0,done:false,drag:false,last:0,lt:0};
+$('sptitle').textContent=nameOf(p);
+$('spsub').textContent=nb.length?'+ '+nb.length+(nb.length>1?' autres coins':' autre coin')+' à moins de '+GROUP_M+' m : validés ensemble':'';
+spSvg.classList.remove('pop');
+spinPaint();spEl.hidden=false;
+}
+function closeSpin(){cancelAnimationFrame(spRaf);spEl.hidden=true;sp=null}
+const spAng=e=>{const r=spSvg.getBoundingClientRect();return Math.atan2(e.clientY-(r.top+r.height/2),e.clientX-(r.left+r.width/2))/RAD};
+function spinAdd(d){
+if(!sp||sp.done)return;
+sp.rot+=d;sp.total+=Math.abs(d);spinPaint();
+if(sp.total>=SPIN_DEG)spinFinish();
+}
+async function spinFinish(){
+const s=sp;s.done=true;cancelAnimationFrame(spRaf);
+spinPaint();
+$('sphint').textContent='Coin fait !';
+$('sptitle').textContent='✓ '+nameOf(s.p);
+spSvg.classList.add('pop');
+try{navigator.vibrate&&navigator.vibrate([60,40,120])}catch(e){}
+try{
+await api('points?id=in.('+s.ids.join(',')+')',{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({fait:true,fait_le:new Date().toISOString()})});
+toast(s.ids.length>1?s.ids.length+' coins faits !':'Coin fait !');
+setTimeout(()=>{if(sp===s)closeSpin()},800);
+load();
+}catch(e){
+if(e.message!=='login')alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colonnes « fait » et « fait_le » ?');
+if(sp===s)closeSpin();
+}
+}
+spSvg.addEventListener('pointerdown',e=>{
+if(!sp||sp.done)return;
+e.preventDefault();try{spSvg.setPointerCapture(e.pointerId)}catch(x){}
+cancelAnimationFrame(spRaf);sp.drag=true;sp.vel=0;sp.last=spAng(e);sp.lt=performance.now();
+});
+spSvg.addEventListener('pointermove',e=>{
+if(!sp||!sp.drag||sp.done)return;
+const a=spAng(e),t=performance.now();
+const d=((a-sp.last+540)%360)-180;
+sp.last=a;
+const dt=Math.max(1,t-sp.lt);sp.lt=t;
+sp.vel=sp.vel*.6+(d/dt)*.4;
+spinAdd(d);
+});
+function spEnd(){
+if(!sp||!sp.drag)return;
+sp.drag=false;
+if(performance.now()-sp.lt>80)sp.vel=0;
+if(sp.done||Math.abs(sp.vel)<=.05)return;
+let t0=performance.now();
+const step=t=>{
+if(!sp||sp.done)return;
+const dt=Math.min(40,t-t0);t0=t;
+spinAdd(sp.vel*dt);
+sp.vel*=Math.pow(.5,dt/350);
+if(sp&&!sp.done&&Math.abs(sp.vel)>.02)spRaf=requestAnimationFrame(step);
+};
+spRaf=requestAnimationFrame(step);
+}
+spSvg.addEventListener('pointerup',spEnd);
+spSvg.addEventListener('pointercancel',spEnd);
+$('spclose').onclick=closeSpin;
+$('spopt').onclick=()=>{if(!sp)return;const id=sp.p.id;closeSpin();openPtPopup(id)};
 
 /* ---------- Voiture : lance / arrête le parcours ---------- */
 const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
