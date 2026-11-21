@@ -215,8 +215,11 @@ L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{subdomains:'abc'
 const ptLayer=L.layerGroup().addTo(map);
 const routeLine=L.polyline([],{color:'#1a73e8',weight:6,opacity:.85}).addTo(map);
 let pts=[],order=[],routeOn=false,me=null,meMarker=null,fitted=false;
-let car=null,carMarker=null;
-try{car=JSON.parse(store.get('car')||'null')}catch(e){}
+let car=null,carMarker=null,walk=null;
+try{walk=JSON.parse(store.get('walk')||'null')}catch(e){}
+if(walk&&walk.car&&Array.isArray(walk.track)&&walk.track.length){car=walk.car;routeOn=true}else walk=null;
+store.del('car');
+const wLine=L.polyline(walk?walk.track.map(t=>[t[0],t[1]]):[],{color:'#2e9d4f',weight:3,opacity:.95,interactive:false}).addTo(map);
 let zone=null,zonePoly=null,drawing=false,dpts=[],dline=null;
 try{zone=JSON.parse(store.get('zone')||'null')}catch(e){}
 const inPoly=(lat,lon,poly)=>{let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const yi=poly[i][0],xi=poly[i][1],yj=poly[j][0],xj=poly[j][1];if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c}return c};
@@ -274,7 +277,7 @@ function drawCar(){
 if(carMarker){map.removeLayer(carMarker);carMarker=null}
 if(!routeOn||!car)return;
 carMarker=L.marker([car.lat,car.lon],{icon:L.divIcon({className:'',html:'<div class="mk car">'+CARSVG+'</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map)
-.bindPopup(()=>'<div class="pop"><b>Voiture</b><button class="o" onclick="placeCar()">Placer ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer</button></div>');
+.bindPopup(()=>{const s=walkStats();return '<div class="pop"><b>Ma balade</b>'+(s?'<br>Temps : '+fmtT(s.t)+'<br>Distance : '+fmtD(s.d):'')+'<button class="o" onclick="placeCar()">Placer la voiture ici (ma position)</button><button class="u" onclick="removeCar()">Supprimer le point voiture</button></div>'});
 }
 function drawRoute(){
 const line=(routeOn&&car&&order.length)?[[car.lat,car.lon],...order.map(i=>[+pts[i].lat,+pts[i].lon]),[car.lat,car.lon]]:[];
@@ -284,7 +287,7 @@ const sc=pts.filter(inZone),n=sc.length,done=sc.filter(p=>p.fait).length,todo=n-
 $('vfill').style.height=(n?done/n*100:0)+'%';
 if(!n){$('vs').textContent='Aucun coin';return}
 let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
-$('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}`+(todo?(line.length?'<br>'+fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':''):'<br>Tout est fait');
+$('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}`+(todo?(line.length?'<br>'+fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':''):'<br>Tout est fait')+(walk?'<br>Balade : '+fmtT(Date.now()-walk.start)+' · '+fmtD(walk.dist):'');
 }
 function refresh(){radarDirty=true;drawPoints();drawRoute();drawCar()}
 let toastT=null;
@@ -311,6 +314,7 @@ function onPos(pos){
 me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt:pos.coords.altitude};
 radarDirty=true;
 if(pos.coords.heading!=null&&!isNaN(pos.coords.heading)&&(pos.coords.speed||0)>0.7){gpsH=pos.coords.heading;gpsHT=Date.now()}
+trackPos(pos);
 if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
 else meMarker.setLatLng([me.lat,me.lon]);
 }
@@ -468,15 +472,14 @@ catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (
 /* ---------- Radar à champi : les 5 coins les plus proches, orienté selon ton cap ---------- */
 const radarEl=$('radar'),cv=$('rcv'),g=cv.getContext('2d');
 let radarOn=false,rafId=null,near=[],radarDirty=true,hCur=null,hRaw=null,hRawT=0,gpsH=null,gpsHT=0,Rcur=0,blips=[],lastSrc='';
-const RAD=Math.PI/180,NICE=[30,50,75,100,150,200,300,500,750,1000,1500,2000,3000,5000,10000,20000,50000];
-const niceRange=d=>{const t=d*1.1;for(const n of NICE)if(n>=t)return n;return Math.ceil(t/50000)*50000};
+const RAD=Math.PI/180,RMAX=200;
 const bearing=(a,b)=>{const f1=a[0]*RAD,f2=b[0]*RAD,dl=(b[1]-a[1])*RAD;return (Math.atan2(Math.sin(dl)*Math.cos(f2),Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl))/RAD+360)%360};
 const shortN=s=>s.length>16?s.slice(0,15)+'…':s;
 function computeNear(){
 radarDirty=false;
 if(!me){near=[];return}
 const a=[me.lat,me.lon];
-near=pts.filter(p=>!p.fait).map(p=>{const b=[+p.lat,+p.lon];return{p,d:hv(a,b),b:bearing(a,b)}}).sort((x,y)=>x.d-y.d).slice(0,5);
+near=pts.filter(p=>!p.fait).map(p=>{const b=[+p.lat,+p.lon];return{p,d:hv(a,b),b:bearing(a,b)}}).filter(n=>n.d<=RMAX).sort((x,y)=>x.d-y.d);
 }
 /* boussole : iOS (webkitCompassHeading) ou Android (orientation absolue) */
 function onOri(e){
@@ -513,11 +516,11 @@ if(hRaw!=null&&now-hRawT<3000){tgt=hRaw;src='Boussole'}
 else if(gpsH!=null&&now-gpsHT<10000){tgt=gpsH;src='Cap GPS'}
 if(tgt!=null)hCur=hCur==null?tgt:(hCur+(((tgt-hCur+540)%360)-180)*.3+360)%360;
 const hd=tgt!=null?hCur:0;
-if(src!==lastSrc){lastSrc=src;$('rsrc').textContent=src}
 if(radarDirty)computeNear();
+const lbl=me?src+' · '+near.length+(near.length>1?' coins':' coin'):src;
+if(lbl!==lastSrc){lastSrc=lbl;$('rsrc').textContent=lbl}
 const mx=w/2,my=h/2,R=Math.max(40,Math.min(w,h)/2-14);
-const target=near.length?niceRange(near[near.length-1].d):50;
-Rcur=Rcur?Rcur+(target-Rcur)*.12:target;
+Rcur=RMAX;
 /* fond, anneaux, axes */
 g.fillStyle='rgba(8,60,25,.55)';g.beginPath();g.arc(mx,my,R,0,7);g.fill();
 g.strokeStyle='rgba(90,255,130,.35)';g.lineWidth=1;
@@ -541,17 +544,16 @@ g.fillText(fmtD(Math.round(Rcur)),mx+16,my-R+14);
 blips=[];
 g.textAlign='center';g.textBaseline='middle';g.font='13px system-ui,sans-serif';g.fillStyle='#9fdcb0';
 if(!me)g.fillText('Recherche de ta position GPS…',mx,my+R*.45);
-else if(!near.length)g.fillText('Aucun coin à faire',mx,my+R*.45);
+else if(!near.length)g.fillText('Aucun coin à faire dans 200 m',mx,my+R*.45);
 near.forEach((n,i)=>{
 const a=(n.b-hd)*RAD,r=Math.min(n.d/Rcur,1)*R,x=mx+r*Math.sin(a),y=my-r*Math.cos(a);
 blips.push({x,y,n});
 const col=i===0?'#ffd54f':'#7CFF9B';
-g.fillStyle=col;g.beginPath();g.arc(x,y,11,0,7);g.fill();
-g.fillStyle='#04140a';g.font='bold 12px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(i+1),x,y+.5);
-const right=x<w-100;g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
-const lx=x+(right?15:-15);
-g.fillStyle=col;g.font='bold 14px system-ui,sans-serif';g.fillText(fmtD(n.d),lx,y+1);
-g.fillStyle='rgba(215,255,224,.75)';g.font='11px system-ui,sans-serif';g.fillText(shortN(nameOf(n.p)),lx,y+14);
+g.fillStyle=col;g.beginPath();g.arc(x,y,i===0?9:7,0,7);g.fill();
+const right=x<w-80;g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
+const lx=x+(right?13:-13);
+g.fillStyle=col;g.font='bold 13px system-ui,sans-serif';g.fillText(fmtD(n.d),lx,y+4);
+if(i===0){g.fillStyle='rgba(215,255,224,.75)';g.font='11px system-ui,sans-serif';g.fillText(shortN(nameOf(n.p)),lx,y+17)}
 });
 /* toi, au centre (toujours vers le haut) */
 g.fillStyle='#fff';g.beginPath();g.moveTo(mx,my-9);g.lineTo(mx+7,my+8);g.lineTo(mx,my+4);g.lineTo(mx-7,my+8);g.closePath();g.fill();
@@ -595,21 +597,50 @@ toast(nameOf(p)+' · '+fmtD(best.n.d));
 
 /* ---------- Voiture : lance / arrête le parcours ---------- */
 const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
+/* Balade : placer la voiture = départ + enregistrement GPS du trajet (trait vert) */
+const fmtT=ms=>{const m=Math.max(0,Math.round(ms/60000)),h=Math.floor(m/60);return h?h+' h '+String(m%60).padStart(2,'0')+' min':m+' min'};
+const walkStats=()=>walk?{t:Date.now()-walk.start,d:walk.dist}:null;
+let wSaveT=0,wake=null;
+function saveWalk(force){const n=Date.now();if(!walk||(!force&&n-wSaveT<5000))return;wSaveT=n;store.set('walk',JSON.stringify(walk))}
+async function keepAwake(){try{if(walk&&'wakeLock' in navigator&&!wake){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>{wake=null})}}catch(e){wake=null}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake();else saveWalk(true)});
+window.addEventListener('pagehide',()=>saveWalk(true));
+function trackPos(pos){
+if(!walk)return;
+const acc=pos.coords.accuracy;if(acc!=null&&acc>30)return;
+const last=walk.track[walk.track.length-1],p=[pos.coords.latitude,pos.coords.longitude,Date.now()];
+const d=hv([last[0],last[1]],[p[0],p[1]]);
+if(d<5)return;
+if(d/Math.max(1,(p[2]-last[2])/1000)>10)return;
+walk.track.push(p);walk.dist+=d;wLine.addLatLng([p[0],p[1]]);saveWalk();drawRoute();
+}
+function startWalk(){
+if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
+car={lat:me.lat,lon:me.lon};
+walk={car,start:Date.now(),track:[[me.lat,me.lon,Date.now()]],dist:0};
+wLine.setLatLngs([[me.lat,me.lon]]);saveWalk(true);keepAwake();
+routeOn=true;plan();refresh();
+toast(order.length?'Balade démarrée : ton trajet est enregistré.':'Balade démarrée (aucun coin à faire dans le parcours).');
+}
+function endWalk(){
+car=null;walk=null;store.del('walk');wLine.setLatLngs([]);
+try{if(wake){wake.release();wake=null}}catch(e){}
+routeOn=false;map.closePopup();plan();refresh();
+}
+function confirmRemove(){
+const s=walkStats();
+const recap=s?'Balade : '+fmtT(s.t)+' · '+fmtD(s.d)+'\n\n':'';
+if(confirm(recap+'Êtes-vous sûr de vouloir supprimer le point voiture ?\nLa balade enregistrée sera effacée.'))endWalk();
+}
+window.removeCar=confirmRemove;
 window.placeCar=()=>{
 if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
-car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));
-routeOn=true;map.closePopup();plan();refresh();toast('Voiture placée ici.');
+car={lat:me.lat,lon:me.lon};if(walk){walk.car=car;saveWalk(true)}
+map.closePopup();plan();refresh();toast('Voiture placée ici.');
 };
-window.removeCar=()=>{car=null;store.del('car');routeOn=false;map.closePopup();plan();refresh()};
-$('carBtn').onclick=()=>{
-if(routeOn){routeOn=false;plan();refresh();return}
-if(!car){
-if(!me){alert('Position GPS pas encore trouvée (autorise la localisation).');return}
-car={lat:me.lat,lon:me.lon};store.set('car',JSON.stringify(car));
-}
-routeOn=true;plan();refresh();
-if(!order.length)toast('Aucun coin à faire dans le parcours.');
-};
+$('carBtn').onclick=()=>{if(routeOn&&car)confirmRemove();else startWalk()};
+setInterval(()=>{if(walk)drawRoute()},20000);
+if(walk)keepAwake();
 
 /* ---------- Prépare mon parcours (zone dessinée au doigt) ---------- */
 function drawZone(){
