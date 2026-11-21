@@ -107,6 +107,15 @@ body.drawing #col,body.drawing #locate{display:none}
 .ts input{margin:0;padding:10px 12px;flex:1;min-width:0}
 #tsort{flex:none;font-size:16px;padding:10px 14px}
 .tempty{padding:18px 6px;color:var(--mut);text-align:center}
+#radar{position:absolute;left:0;right:0;top:0;height:50%;z-index:850;background:#04140a;color:#d7ffe0;display:flex;flex-direction:column;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.rh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 4px}
+.rh b{font-size:17px}.rh span{flex:1;color:#7fbf90;font-size:13px}
+#radar .tb.g{color:#d7ffe0;border-color:#4a8a5c}
+#rwrap{flex:1;min-height:0;position:relative}
+#rcv{position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation}
+body.radar #map{top:50%}
+body.radar #tt{display:none}
+body.radar #v,body.radar #vs{top:calc(50% + 10px)}
 </style>
 </head>
 <body>
@@ -117,6 +126,7 @@ body.drawing #col,body.drawing #locate{display:none}
 <button class="ic" id="locate" title="Ma position">◎</button>
 <div id="col">
 <div class="act"><span>Table</span><button class="ic" id="tblBtn">≡</button></div>
+<div class="act"><span>Radar à champi</span><button class="ic" id="radarBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 12L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
 <div class="act"><span>RAZ</span><button class="ic sm" id="raz">RAZ</button></div>
 <div class="act"><span>Voiture</span><button class="ic" id="carBtn"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg></button></div>
 <div class="act"><span>Exporter en CSV</span><button class="ic sm" id="expBtn">CSV</button></div>
@@ -143,6 +153,10 @@ body.drawing #col,body.drawing #locate{display:none}
 <button class="btn" id="send">Signaler</button>
 </div>
 </div>
+</div>
+<div id="radar" hidden>
+<div class="rh"><b>Radar à champi</b><span id="rsrc"></span><button class="tb g" id="rclose">Fermer</button></div>
+<div id="rwrap"><canvas id="rcv"></canvas></div>
 </div>
 <div id="tbl" hidden>
 <div class="th"><b>Table des coins</b><span id="tcount"></span><button class="tb g" id="tclose">Fermer</button></div>
@@ -272,7 +286,7 @@ if(!n){$('vs').textContent='Aucun coin';return}
 let tot=0;for(let i=0;i<line.length-1;i++)tot+=hv(line[i],line[i+1]);
 $('vs').innerHTML=`<b>${todo} à faire</b> · ${done}/${n}${zone?' · zone':''}`+(todo?(line.length?'<br>'+fmtD(tot)+' · ~'+Math.round(tot/1000*15)+' min':''):'<br>Tout est fait');
 }
-function refresh(){drawPoints();drawRoute();drawCar()}
+function refresh(){radarDirty=true;drawPoints();drawRoute();drawCar()}
 let toastT=null;
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,5000)}
 async function load(){
@@ -295,6 +309,8 @@ catch(e){alert('Impossible de modifier : as-tu lancé le SQL qui ajoute les colo
 /* ---------- GPS ---------- */
 function onPos(pos){
 me={lat:pos.coords.latitude,lon:pos.coords.longitude,acc:pos.coords.accuracy,alt:pos.coords.altitude};
+radarDirty=true;
+if(pos.coords.heading!=null&&!isNaN(pos.coords.heading)&&(pos.coords.speed||0)>0.7){gpsH=pos.coords.heading;gpsHT=Date.now()}
 if(!meMarker)meMarker=L.marker([me.lat,me.lon],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false,zIndexOffset:1000}).addTo(map);
 else meMarker.setLatLng([me.lat,me.lon]);
 }
@@ -313,7 +329,7 @@ function closeSheet(){$('sheet').classList.remove('open');clearPending()}
 $('fab').onclick=()=>{closeTbl();openSheet()};
 $('close').onclick=closeSheet;
 $('useGps').onclick=clearPending;
-$('usePick').onclick=()=>{$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
+$('usePick').onclick=()=>{closeRadar();$('sheet').classList.remove('open');document.body.classList.add('picking');$('pk').hidden=false};
 function endPick(){document.body.classList.remove('picking');$('pk').hidden=true}
 $('pkc').onclick=()=>{endPick();clearPending();openSheet()};
 $('pkok').onclick=()=>{
@@ -412,14 +428,14 @@ return `<div class="tr${selId===p.id?' sel':''}" data-id="${p.id}">
 }).join('');
 $('trows').scrollTop=sc;
 }
-$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}map.closePopup();renderTable();$('tbl').hidden=false};
+$('tblBtn').onclick=()=>{if(!$('tbl').hidden){closeTbl();return}closeRadar();map.closePopup();renderTable();$('tbl').hidden=false};
 $('tclose').onclick=closeTbl;
 window.editPoint=id=>{
 const p=pts.find(q=>q.id===id);if(!p)return;
 map.closePopup();$('col').classList.remove('open');
 setTimeout(()=>{
 try{
-tq='';$('tsearch').value='';editId=id;pinId=id;
+closeRadar();tq='';$('tsearch').value='';editId=id;pinId=id;
 $('tbl').hidden=false;
 renderTable();focusPoint(p);renderTable();
 $('trows').scrollTop=0;
@@ -449,6 +465,134 @@ catch(err){toast(/column/i.test(err.message)?'Colonne manquante : lance le SQL (
 }
 };
 
+/* ---------- Radar à champi : les 5 coins les plus proches, orienté selon ton cap ---------- */
+const radarEl=$('radar'),cv=$('rcv'),g=cv.getContext('2d');
+let radarOn=false,rafId=null,near=[],radarDirty=true,hCur=null,hRaw=null,hRawT=0,gpsH=null,gpsHT=0,Rcur=0,blips=[],lastSrc='';
+const RAD=Math.PI/180,NICE=[30,50,75,100,150,200,300,500,750,1000,1500,2000,3000,5000,10000,20000,50000];
+const niceRange=d=>{const t=d*1.1;for(const n of NICE)if(n>=t)return n;return Math.ceil(t/50000)*50000};
+const bearing=(a,b)=>{const f1=a[0]*RAD,f2=b[0]*RAD,dl=(b[1]-a[1])*RAD;return (Math.atan2(Math.sin(dl)*Math.cos(f2),Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl))/RAD+360)%360};
+const shortN=s=>s.length>16?s.slice(0,15)+'…':s;
+function computeNear(){
+radarDirty=false;
+if(!me){near=[];return}
+const a=[me.lat,me.lon];
+near=pts.filter(p=>!p.fait).map(p=>{const b=[+p.lat,+p.lon];return{p,d:hv(a,b),b:bearing(a,b)}}).sort((x,y)=>x.d-y.d).slice(0,5);
+}
+/* boussole : iOS (webkitCompassHeading) ou Android (orientation absolue) */
+function onOri(e){
+let h=null;
+if(typeof e.webkitCompassHeading==='number'&&!isNaN(e.webkitCompassHeading))h=e.webkitCompassHeading;
+else if(e.alpha!=null&&(e.absolute||e.type==='deviceorientationabsolute')){
+if(e.beta!=null&&e.gamma!=null&&Math.abs(e.beta)>=40){
+const a=e.alpha*RAD,b=e.beta*RAD,c=e.gamma*RAD;
+const rA=-Math.cos(a)*Math.sin(c)-Math.sin(a)*Math.sin(b)*Math.cos(c);
+const rB=-Math.sin(a)*Math.sin(c)+Math.cos(a)*Math.sin(b)*Math.cos(c);
+h=(Math.atan2(rA,rB)/RAD+360)%360;
+}else h=(360-e.alpha)%360;
+}
+if(h!=null){hRaw=h;hRawT=Date.now()}
+}
+const oriEv='ondeviceorientationabsolute' in window?'deviceorientationabsolute':'deviceorientation';
+async function startOri(){
+try{
+if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+if(await DeviceOrientationEvent.requestPermission()!=='granted')toast('Boussole refusée : le radar utilisera ton cap GPS quand tu marches.');
+}
+}catch(e){}
+if(radarOn)window.addEventListener(oriEv,onOri,true);
+}
+function drawRadar(){
+const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;
+if(!w||!h)return;
+if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
+g.setTransform(dpr,0,0,dpr,0,0);
+g.clearRect(0,0,w,h);
+const now=Date.now();
+let tgt=null,src='Nord en haut';
+if(hRaw!=null&&now-hRawT<3000){tgt=hRaw;src='Boussole'}
+else if(gpsH!=null&&now-gpsHT<10000){tgt=gpsH;src='Cap GPS'}
+if(tgt!=null)hCur=hCur==null?tgt:(hCur+(((tgt-hCur+540)%360)-180)*.3+360)%360;
+const hd=tgt!=null?hCur:0;
+if(src!==lastSrc){lastSrc=src;$('rsrc').textContent=src}
+if(radarDirty)computeNear();
+const mx=w/2,my=h/2,R=Math.max(40,Math.min(w,h)/2-14);
+const target=near.length?niceRange(near[near.length-1].d):50;
+Rcur=Rcur?Rcur+(target-Rcur)*.12:target;
+/* fond, anneaux, axes */
+g.fillStyle='rgba(8,60,25,.55)';g.beginPath();g.arc(mx,my,R,0,7);g.fill();
+g.strokeStyle='rgba(90,255,130,.35)';g.lineWidth=1;
+for(const k of [.25,.5,.75,1]){g.beginPath();g.arc(mx,my,R*k,0,7);g.stroke()}
+g.beginPath();g.moveTo(mx-R,my);g.lineTo(mx+R,my);g.moveTo(mx,my-R);g.lineTo(mx,my+R);g.stroke();
+/* balayage */
+if(g.createConicGradient){
+const sw=(now%2500)/2500*2*Math.PI-Math.PI/2;
+const gr=g.createConicGradient(sw-Math.PI/2,mx,my);
+gr.addColorStop(0,'rgba(90,255,130,0)');gr.addColorStop(.25,'rgba(90,255,130,.35)');gr.addColorStop(.2501,'rgba(90,255,130,0)');gr.addColorStop(1,'rgba(90,255,130,0)');
+g.fillStyle=gr;g.beginPath();g.arc(mx,my,R,0,7);g.fill();
+}
+/* points cardinaux (tournent avec ton cap) */
+g.font='bold 14px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';
+[['N',0,'#ff5252'],['E',90,'#9fdcb0'],['S',180,'#9fdcb0'],['O',270,'#9fdcb0']].forEach(([t,b,c])=>{const a=(b-hd)*RAD;g.fillStyle=c;g.fillText(t,mx+(R-11)*Math.sin(a),my-(R-11)*Math.cos(a))});
+/* échelle */
+g.font='11px system-ui,sans-serif';g.fillStyle='rgba(180,255,200,.75)';g.textAlign='left';g.textBaseline='alphabetic';
+g.fillText(fmtD(Math.round(Rcur/2)),mx+16,my-R/2-3);
+g.fillText(fmtD(Math.round(Rcur)),mx+16,my-R+14);
+/* coins */
+blips=[];
+g.textAlign='center';g.textBaseline='middle';g.font='13px system-ui,sans-serif';g.fillStyle='#9fdcb0';
+if(!me)g.fillText('Recherche de ta position GPS…',mx,my+R*.45);
+else if(!near.length)g.fillText('Aucun coin à faire',mx,my+R*.45);
+near.forEach((n,i)=>{
+const a=(n.b-hd)*RAD,r=Math.min(n.d/Rcur,1)*R,x=mx+r*Math.sin(a),y=my-r*Math.cos(a);
+blips.push({x,y,n});
+const col=i===0?'#ffd54f':'#7CFF9B';
+g.fillStyle=col;g.beginPath();g.arc(x,y,11,0,7);g.fill();
+g.fillStyle='#04140a';g.font='bold 12px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(i+1),x,y+.5);
+const right=x<w-100;g.textAlign=right?'left':'right';g.textBaseline='alphabetic';
+const lx=x+(right?15:-15);
+g.fillStyle=col;g.font='bold 14px system-ui,sans-serif';g.fillText(fmtD(n.d),lx,y+1);
+g.fillStyle='rgba(215,255,224,.75)';g.font='11px system-ui,sans-serif';g.fillText(shortN(nameOf(n.p)),lx,y+14);
+});
+/* toi, au centre (toujours vers le haut) */
+g.fillStyle='#fff';g.beginPath();g.moveTo(mx,my-9);g.lineTo(mx+7,my+8);g.lineTo(mx,my+4);g.lineTo(mx-7,my+8);g.closePath();g.fill();
+}
+function radarFrame(){
+if(!radarOn)return;
+rafId=requestAnimationFrame(radarFrame);
+drawRadar();
+}
+function openRadar(){
+if(radarOn)return;
+radarOn=true;
+startOri();
+closeTbl();map.closePopup();$('col').classList.remove('open');
+radarEl.hidden=false;document.body.classList.add('radar');
+$('radarBtn').classList.add('on');
+map.invalidateSize();
+if(me)map.setView([me.lat,me.lon],Math.max(map.getZoom(),17),{animate:false});
+radarDirty=true;Rcur=0;
+radarFrame();
+}
+function closeRadar(){
+if(!radarOn)return;
+radarOn=false;cancelAnimationFrame(rafId);
+window.removeEventListener(oriEv,onOri,true);
+radarEl.hidden=true;document.body.classList.remove('radar');
+$('radarBtn').classList.remove('on');
+map.invalidateSize();
+}
+$('radarBtn').onclick=()=>radarOn?closeRadar():openRadar();
+$('rclose').onclick=closeRadar;
+cv.addEventListener('pointerdown',e=>{
+const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+let best=null,bd=32;
+blips.forEach(b=>{const d=Math.hypot(b.x-x,b.y-y);if(d<bd){bd=d;best=b}});
+if(!best)return;
+const p=best.n.p;
+map.setView([p.lat,p.lon],Math.max(map.getZoom(),18),{animate:true});
+toast(nameOf(p)+' · '+fmtD(best.n.d));
+});
+
 /* ---------- Voiture : lance / arrête le parcours ---------- */
 const CARSVG='<svg viewBox="0 0 24 24"><path fill="#fff" d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11h.5A1.5 1.5 0 0 1 21 12.5V17a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.1 0h9.8l-1-3.2a.5.5 0 0 0-.5-.3H8.6a.5.5 0 0 0-.5.3L7.1 11zM6.8 15.2a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10.4 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
 window.placeCar=()=>{
@@ -475,7 +619,7 @@ $('zoneLbl').textContent=zone?'Désactiver la zone':'Prépare mon parcours';$('z
 }
 function resetLine(){dpts=[];if(dline){map.removeLayer(dline);dline=null}}
 function startDraw(){
-closeTbl();map.closePopup();$('col').classList.remove('open');
+closeRadar();closeTbl();map.closePopup();$('col').classList.remove('open');
 drawing=true;document.body.classList.add('drawing');$('dr').hidden=false;$('drb').hidden=false;
 map.dragging.disable();map.touchZoom.disable();map.doubleClickZoom.disable();resetLine();
 }
